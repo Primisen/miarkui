@@ -1,5 +1,6 @@
 import React from "react";
 import {Link} from "react-router-dom";
+import Logout from "./Logout";
 
 function Navbar() {
 
@@ -20,26 +21,63 @@ function Navbar() {
                     }
                     id="example-navbar-danger"
                 >
-                    <ul className="flex flex-col lg:flex-row list-none lg:ml-auto">
-                        <li className="nav-item">
-                            <Link
-                                className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
-                                to='/login'
-                            >
-                                <i className="fab fa-twitter text-lg leading-lg text-white opacity-75"></i><span
-                                className="ml-2">Sign In</span>
-                            </Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link
-                                className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
-                                to="/registration"
-                            >
-                                <i className="fab fa-pinterest text-lg leading-lg text-white opacity-75"></i><span
-                                className="ml-2">Sign Up</span>
-                            </Link>
-                        </li>
-                    </ul>
+
+                    {(localStorage.getItem('token') != null)
+                        ?
+                        <ul className="flex flex-col lg:flex-row list-none lg:ml-auto">
+
+                            <li className="nav-item">
+                                <Logout/>
+                            </li>
+                        </ul>
+                        :
+                        <ul className="flex flex-col lg:flex-row list-none lg:ml-auto">
+
+
+                            <li className="nav-item">
+                                <Link
+                                    className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
+                                    to='/login'
+                                >
+                                    <i className="fab fa-twitter text-lg leading-lg text-white opacity-75"></i><span
+                                    className="ml-2">Sign In</span>
+                                </Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link
+                                    className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
+                                    to="/registration"
+                                >
+                                    <i className="fab fa-pinterest text-lg leading-lg text-white opacity-75"></i><span
+                                    className="ml-2">Sign Up</span>
+                                </Link>
+                            </li>
+                        </ul>
+
+                    }
+
+                    {/*<ul className="flex flex-col lg:flex-row list-none lg:ml-auto">*/}
+
+                    {/*    */}
+                    {/*    <li className="nav-item">*/}
+                    {/*        <Link*/}
+                    {/*            className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"*/}
+                    {/*            to='/login'*/}
+                    {/*        >*/}
+                    {/*            <i className="fab fa-twitter text-lg leading-lg text-white opacity-75"></i><span*/}
+                    {/*            className="ml-2">Sign In</span>*/}
+                    {/*        </Link>*/}
+                    {/*    </li>*/}
+                    {/*    <li className="nav-item">*/}
+                    {/*        <Link*/}
+                    {/*            className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"*/}
+                    {/*            to="/registration"*/}
+                    {/*        >*/}
+                    {/*            <i className="fab fa-pinterest text-lg leading-lg text-white opacity-75"></i><span*/}
+                    {/*            className="ml-2">Sign Up</span>*/}
+                    {/*        </Link>*/}
+                    {/*    </li>*/}
+                    {/*</ul>*/}
                 </div>
             </div>
         </nav>

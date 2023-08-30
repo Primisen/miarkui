@@ -1,15 +1,20 @@
 import React, {useState} from "react";
 import axios from "axios";
 import {IUser} from "../models/user";
-import ErrorMessage from "./ErrorMessage";
+import ErrorMessage from "../components/ErrorMessage";
+import {Link, useNavigate} from "react-router-dom";
 
 function Login() {
+
+    const navigate = useNavigate();
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
 
+
     async function login(event: React.FormEvent) {
+        setError('');
         event.preventDefault();
 
         if (email.trim().length === 0 || password.trim().length === 0) {
@@ -17,17 +22,28 @@ function Login() {
             return
         }
 
+
         const user: IUser = {
             email,
             password
         }
-
         const response = await axios.post('http://localhost:4001/login', user)
-        console.log(response)
+
+        console.log(response.data)
+
+        if (response.data === 'Email or password is incorrect.') {
+            setError(response.data)
+        } else {
+            localStorage.setItem('token', response.data);
+            navigate('/');
+            window.location.reload();
+        }
     }
 
     return (
         <main>
+
+
             <section className="absolute w-full h-full">
                 <div
                     // className="absolute top-0 w-full h-full bg-gray-900"
@@ -130,7 +146,7 @@ function Login() {
                                             </label>
                                         </div>
 
-                                        <ErrorMessage error={error}/>
+                                        {error && <ErrorMessage error={error}/>}
 
                                         <div className="text-center mt-6">
                                             <button
@@ -145,23 +161,13 @@ function Login() {
                                 </div>
                             </div>
                             <div className="flex flex-wrap mt-6">
-                                <div className="w-1/2">
-                                    <a
-                                        href="#pablo"
-                                        onClick={e => e.preventDefault()}
-                                        className="text-gray-300"
-                                    >
-                                        <small>Forgot password?</small>
-                                    </a>
-                                </div>
                                 <div className="w-1/2 text-right">
-                                    <a
-                                        href="/registration"
-                                        onClick={e => e.preventDefault()}
+                                    <Link
+                                        to="/registration"
                                         className="text-gray-300"
                                     >
                                         <small>Create new account</small>
-                                    </a>
+                                    </Link>
                                 </div>
                             </div>
                         </div>

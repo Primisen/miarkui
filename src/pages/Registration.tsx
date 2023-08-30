@@ -1,10 +1,12 @@
 import React, {useState} from "react";
 import axios from "axios";
 import {IUser} from "../models/user";
-import ErrorMessage from "./ErrorMessage";
-import {Link} from "react-router-dom";
+import ErrorMessage from "../components/ErrorMessage";
+import {Link, useNavigate} from "react-router-dom";
 
 function Registration() {
+
+    const navigate = useNavigate();
 
     const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
@@ -12,6 +14,7 @@ function Registration() {
     const [error, setError] = useState('')
 
     async function register(event: React.FormEvent) {
+        setError('');
         event.preventDefault()
 
         if (username.trim().length === 0 || email.trim().length === 0 || password.trim().length === 0) {
@@ -25,11 +28,21 @@ function Registration() {
             password
         }
 
-        await axios.post<IUser>('http://localhost:4001/registration', user)
+        const response = await axios.post<IUser>('http://localhost:4001/registration', user)
+
+        if (typeof response.data === 'string') {
+            setError(response.data)
+        } else {
+
+            navigate('/login');
+        }
+
     }
 
     return (
         <main>
+
+
             <section className="absolute w-full h-full">
                 <div
                     // className="absolute top-0 w-full h-full bg-gray-900"
@@ -44,7 +57,7 @@ function Registration() {
                     <div className="flex content-center items-center justify-center h-full">
                         <div className="w-full lg:w-4/12 px-4">
                             <div
-                                className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-purple-100 border-0">
+                                className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-purple-400 border-0">
                                 <div className="rounded-t mb-0 px-6 py-6">
                                     <div className="text-center mb-3">
                                         <h6 className="text-gray-600 text-sm font-bold">
