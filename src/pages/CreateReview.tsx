@@ -2,6 +2,12 @@ import React, {useState} from "react";
 import MarkdownEditor from "@uiw/react-markdown-editor";
 import ReactMarkdown from "react-markdown";
 import {PutObjectCommand, S3Client} from "@aws-sdk/client-s3";
+import {S3RequestPresigner} from "@aws-sdk/s3-request-presigner";
+import {HttpRequest} from "@aws-sdk/protocol-http";
+import {Hash} from "@smithy/hash-node";
+import { parseUrl } from "@aws-sdk/url-parser";
+import {formatUrl} from "@aws-sdk/util-format-url";
+
 
 function CreateReview() {
 
@@ -34,6 +40,21 @@ function CreateReview() {
         const client = createClient()
         const command = createCommand()
         await client.send(command);
+
+        const s3ObjectUrl = parseUrl(s3BaseImageUrl + coverImage?.name);
+        const presigner = new S3RequestPresigner({
+            credentials: {
+                accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
+                secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACCESS_KEY
+            },
+            region: process.env.REACT_APP_S3_BUCKET_REGION,
+
+            sha256: Hash.bind(null, "sha256"), // In Node.js
+            //sha256: Sha256 // In browsers
+        });
+// Create a GET request from S3 url.
+        const url = await presigner.presign(new HttpRequest(s3ObjectUrl));
+        console.log("PRESIGNED URL: ", formatUrl(url));
     }
 
     function createClient() {
