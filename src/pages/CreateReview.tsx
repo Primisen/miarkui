@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import MarkdownEditor from "@uiw/react-markdown-editor";
 import ReactMarkdown from "react-markdown";
+import {PutObjectCommand, S3Client} from "@aws-sdk/client-s3";
 
 function CreateReview() {
 
@@ -20,11 +21,41 @@ function CreateReview() {
         'Also you can read more about visible decorations using **markdown** ' +
         '<a href="https://www.markdownguide.org/basic-syntax/">here</a>')
 
-    const [coverImage, setCoverImage] = useState()
+    const [coverImage, setCoverImage] = useState<File>()
+
+    const s3BaseImageUrl =
+        "https://" +
+        process.env.REACT_APP_S3_BUCKET_NAME +
+        ".s3." +
+        process.env.REACT_APP_S3_BUCKET_REGION +
+        ".amazonaws.com/"
+
+    async function handleUploadImage() {
+        const client = createClient()
+        const command = createCommand()
+        await client.send(command);
+    }
+
+    function createClient() {
+        return new S3Client({
+            region: process.env.REACT_APP_S3_BUCKET_REGION,
+            credentials: {
+                accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
+                secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACCESS_KEY
+            }
+        });
+    }
+
+    function createCommand() {
+        return new PutObjectCommand({
+            Bucket: process.env.REACT_APP_S3_BUCKET_NAME,
+            Key: coverImage?.name,
+            Body: coverImage
+        })
+    }
 
     return (
         <div>
-
             <input
                 type="text"
                 placeholder='title'
@@ -35,18 +66,10 @@ function CreateReview() {
             <input
                 type="file"
                 // @ts-ignore
-                onChange={event => console.log(event.target.files[0])}
+                onChange={event => setCoverImage(event.target.files[0])}
             />
 
-            <img src={coverImage}/>
-
-            {/*<MarkdownEditor*/}
-            {/*    value={title}*/}
-            {/*    height="100px"*/}
-            {/*    visible={true}*/}
-            {/*    hideToolbar={false}*/}
-            {/*    onChange={(value, viewUpdate) => setTitle(value)}*/}
-            {/*/>*/}
+            <button onClick={handleUploadImage}>Upload</button>
 
             <MarkdownEditor
                 value={text}
