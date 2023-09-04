@@ -1,11 +1,16 @@
 export interface IReview {
     id?: number
-    name: string
-    subjectId: number
-    userId: number
+    title: string
     text: string
-    // user: {
-    //     id: number
-    //     username: string
-    // }
+    coverImageUrl: string
+    subject: {
+        id?: number
+        name: string,
+        category: {
+            id?: number
+            name: string
+        }
+    },
+    tags: string []
+    userId: number
 }

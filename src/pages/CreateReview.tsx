@@ -1,17 +1,21 @@
-import React, {useState} from "react";
+import React, {FormEvent, useEffect, useState} from "react";
 import MarkdownEditor from "@uiw/react-markdown-editor";
 import ReactMarkdown from "react-markdown";
 import {PutObjectCommand, S3Client} from "@aws-sdk/client-s3";
 import {S3RequestPresigner} from "@aws-sdk/s3-request-presigner";
 import {HttpRequest} from "@aws-sdk/protocol-http";
 import {Hash} from "@smithy/hash-node";
-import { parseUrl } from "@aws-sdk/url-parser";
+import {parseUrl} from "@aws-sdk/url-parser";
 import {formatUrl} from "@aws-sdk/util-format-url";
-
+import axios from "axios";
+import API from '../api'
+import {ICategory} from "../models/category";
+import {ISubject} from "../models/subject";
+import {IReview} from "../models/review";
 
 function CreateReview() {
 
-    const [title, setTitle] = useState('Enter your title  \n')
+    const [title, setTitle] = useState('')
     const [text, setText] = useState(
         '> Write the text of your review here.   \n' +
         '\n' +
@@ -29,7 +33,35 @@ function CreateReview() {
 
     const [coverImage, setCoverImage] = useState<File>()
 
-    const s3BaseImageUrl =
+    const [image, setImage] = useState('')
+
+    const [coverImageUrl, setCoverImageUrl] = useState('')
+
+    const [tags, setTags] = useState(["Movie", "Comedy"])
+
+
+    const [categories, setCategories] = useState<ICategory[]>([])
+
+    const [subjects, setSubjects] = useState<ISubject[]>([])
+
+    const [newCategoryName, setNewCategoryName] = useState('')
+    const [newSubjectName, setNewSubjectName] = useState('')
+
+    const [category, setCategory] = useState('')
+    const [subject, setSubject] = useState('')
+
+    function removeTag(index: number) {
+        setTags(tags.filter((element, i) => i !== index))
+    }
+
+    function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+        if (event.target.value.includes(" ")) {
+            setTags([...tags, event.target.value])
+            event.target.value = ''
+        }
+    }
+
+    const s3BaseUrl =
         "https://" +
         process.env.REACT_APP_S3_BUCKET_NAME +
         ".s3." +
@@ -37,11 +69,17 @@ function CreateReview() {
         ".amazonaws.com/"
 
     async function handleUploadImage() {
-        const client = createClient()
-        const command = createCommand()
-        await client.send(command);
+        const client = createS3Client()
+        const putCommand = createPutCommand(coverImage)
+        await client.send(putCommand);
 
-        const s3ObjectUrl = parseUrl(s3BaseImageUrl + coverImage?.name);
+        setCoverImageUrl(s3BaseUrl + coverImage?.name)
+
+        await getImageByName()
+    }
+
+    async function getImageByName() {
+        const s3ObjectUrl = parseUrl(coverImageUrl);
         const presigner = new S3RequestPresigner({
             credentials: {
                 accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
@@ -49,15 +87,13 @@ function CreateReview() {
             },
             region: process.env.REACT_APP_S3_BUCKET_REGION,
 
-            sha256: Hash.bind(null, "sha256"), // In Node.js
-            //sha256: Sha256 // In browsers
+            sha256: Hash.bind(null, "sha256"),
         });
-// Create a GET request from S3 url.
         const url = await presigner.presign(new HttpRequest(s3ObjectUrl));
-        console.log("PRESIGNED URL: ", formatUrl(url));
+        setImage(formatUrl(url).toString())
     }
 
-    function createClient() {
+    function createS3Client() {
         return new S3Client({
             region: process.env.REACT_APP_S3_BUCKET_REGION,
             credentials: {
@@ -67,42 +103,174 @@ function CreateReview() {
         });
     }
 
-    function createCommand() {
+    function createPutCommand(file?: File) {
         return new PutObjectCommand({
             Bucket: process.env.REACT_APP_S3_BUCKET_NAME,
-            Key: coverImage?.name,
-            Body: coverImage
+            Key: file?.name,
+            Body: file
         })
     }
 
+    async function addReview(event: FormEvent) {
+
+        event.preventDefault()
+
+        if (newCategoryName !== ''){
+            setCategory(newCategoryName)
+        }
+        if (newSubjectName !== ''){
+            setSubject(newSubjectName)
+        }
+
+        const review: IReview = {
+            title: title,
+            text: text,
+            coverImageUrl: coverImageUrl,
+            subject: {
+                name:  subject,
+                category: {
+                    name: category
+                }
+            },
+            tags: tags,
+            userId: localStorage.userId
+        }
+
+        await API.post('/reviews', review)
+    }
+
+    async function fetchCategory() {
+        const response = await API.get('/categories')
+        setCategories(response.data);
+    }
+
+    async function fetchSubject() {
+        const response = await API.get('/subjects')
+        setSubjects(response.data);
+    }
+
+    useEffect(() => {
+        fetchCategory();
+        fetchSubject()
+    }, [])
+
     return (
-        <div>
-            <input
-                type="text"
-                placeholder='title'
-                value={title}
-                onChange={event => setTitle(event.target.value)}
-            />
+        <div className="container mx-auto px-4 h-full ">
+            <form onSubmit={addReview}>
 
-            <input
-                type="file"
-                // @ts-ignore
-                onChange={event => setCoverImage(event.target.files[0])}
-            />
+                <div className="relative w-full mb-3">
+                    <label
+                        className="block uppercase text-gray-700 text-xs font-bold mb-2"
+                        htmlFor="category"
+                    >
+                        Select a category:
+                    </label>
+                    <select
+                        name="category"
+                        className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring "
+                        onChange={event => setCategory(event.target.value)}
+                    >
+                        {categories.map((category) => (
+                            <option value={category.name}>{category.name}</option>
+                        ))}
+                    </select>
 
-            <button onClick={handleUploadImage}>Upload</button>
+                    <label
+                        className="block uppercase text-gray-700 text-xs font-bold mb-2"
+                        htmlFor="category"
+                    >
+                        Or create new category:
+                    </label>
+                    <input
+                        name="title"
+                        className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow"
+                        type="text"
+                        placeholder='New category'
+                        value={newCategoryName}
+                        onChange={event => setNewCategoryName(event.target.value)}
+                    />
+                </div>
+                <div className="relative w-full mb-3">
+                    <label
+                        className="block uppercase text-gray-700 text-xs font-bold mb-2"
+                        htmlFor="subject"
+                    >
+                        Select a subject:
+                    </label>
+                    <select
+                        name="subject"
+                        className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring "
+                        onChange={event => setSubject(event.target.value)}
+                    >
+                        {subjects.map((subject) => (
+                            <option value={subject.name}>{subject.name}</option>
+                        ))}
+                    </select>
 
-            <MarkdownEditor
-                value={text}
-                height="600px"
-                visible={true}
-                toolbarBottom={true}
-                onChange={(value, viewUpdate) => setText(value)}
-            />
+                    <label
+                        className="block uppercase text-gray-700 text-xs font-bold mb-2"
+                        htmlFor="newSubject"
+                    >
+                        Or create new subject:
+                    </label>
+                    <input
+                        name="newSubject"
+                        className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow"
+                        type="text"
+                        placeholder='New subject'
+                        value={newSubjectName}
+                        onChange={event => setNewSubjectName(event.target.value)}
+                    />
+                </div>
+                <div className="relative w-full mb-3">
+                    <label
+                        className="block uppercase text-gray-700 text-xs font-bold mb-2"
+                        htmlFor="title"
+                    >
+                        Title
+                    </label>
+                    <input
+                        name="title"
+                        className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow"
+                        type="text"
+                        placeholder='Title'
+                        value={title}
+                        onChange={event => setTitle(event.target.value)}
+                    />
+                </div>
 
-            <ReactMarkdown>
-                {title + text}
-            </ReactMarkdown>
+                <MarkdownEditor
+                    value={text}
+                    height="600px"
+                    visible={true}
+                    onChange={(value, viewUpdate) => setText(value)}
+                />
+
+                <div className="relative w-full mb-3">
+                    <input
+                        type="file"
+                        // @ts-ignore
+                        onChange={event => (setCoverImage(event.target.files[0]))}
+                    />
+                </div>
+
+                <div className="mb-3 border-amber-800 border-solid bg-purple-50">
+
+                    {tags.map((tag, index) => (
+                        <div key={index}>
+                            <span>{tag}</span>
+                            <span className="cursor-pointer" onClick={() => removeTag(index)}>&times;</span>
+                        </div>
+                    ))}
+
+                    <input onChange={event => handleChange(event)} className="flex-grow" type="text"
+                           placeholder="tags"/>
+                </div>
+
+
+                <button type="submit">Add new review</button>
+
+            </form>
         </div>
     )
 }
