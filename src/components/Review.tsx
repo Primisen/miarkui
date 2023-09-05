@@ -1,15 +1,28 @@
-import React from 'react';
+import {useParams} from "react-router-dom";
+import {useEffect, useState} from "react";
 import {IReview} from "../models/review";
+import API from '../api'
 
-interface ReviewProps {
-    review: IReview
-}
+function Review() {
 
-export function Review({review}: ReviewProps) {
+    const {id} = useParams();
+    const [review, setReview] = useState<IReview>()
+
+    async function fetchReview() {
+        const response = await API.get<IReview>('/reviews/' + id)
+        setReview(response.data);
+    }
+
+    useEffect(() => {
+        fetchReview()
+    }, []);
 
     return (
         <div>
-            {review.text}
+            review
+            {review?.text}
         </div>
     )
 }
+
+export default Review

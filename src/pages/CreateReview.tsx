@@ -1,13 +1,6 @@
 import React, {FormEvent, useEffect, useState} from "react";
 import MarkdownEditor from "@uiw/react-markdown-editor";
-import ReactMarkdown from "react-markdown";
 import {PutObjectCommand, S3Client} from "@aws-sdk/client-s3";
-import {S3RequestPresigner} from "@aws-sdk/s3-request-presigner";
-import {HttpRequest} from "@aws-sdk/protocol-http";
-import {Hash} from "@smithy/hash-node";
-import {parseUrl} from "@aws-sdk/url-parser";
-import {formatUrl} from "@aws-sdk/util-format-url";
-import axios from "axios";
 import API from '../api'
 import {ICategory} from "../models/category";
 import {ISubject} from "../models/subject";
@@ -21,8 +14,6 @@ function CreateReview() {
         '\n' +
         'On the right side, you can see how your article will look after publication.    \n' +
         '\n' +
-        '**Please don\'t edit the title design** (do not remove or add new # symbol).    \n' +
-        '\n' +
         '*When writing an article, be polite and friendly. Regardless of whether your assessment is good or bad,    \n' +
         'try to describe both the advantages and disadvantages \n' +
         'of the subject under review, so the review will turn out to \n' +
@@ -32,21 +23,12 @@ function CreateReview() {
         '<a href="https://www.markdownguide.org/basic-syntax/">here</a>')
 
     const [coverImage, setCoverImage] = useState<File>()
-
-    const [image, setImage] = useState('')
-
     const [coverImageUrl, setCoverImageUrl] = useState('')
-
     const [tags, setTags] = useState(["Movie", "Comedy"])
-
-
     const [categories, setCategories] = useState<ICategory[]>([])
-
     const [subjects, setSubjects] = useState<ISubject[]>([])
-
     const [newCategoryName, setNewCategoryName] = useState('')
     const [newSubjectName, setNewSubjectName] = useState('')
-
     const [category, setCategory] = useState('')
     const [subject, setSubject] = useState('')
 
@@ -70,27 +52,15 @@ function CreateReview() {
 
     async function handleUploadImage() {
         const client = createS3Client()
+        console.log(coverImage?.name)
         const putCommand = createPutCommand(coverImage)
         await client.send(putCommand);
 
         setCoverImageUrl(s3BaseUrl + coverImage?.name)
 
-        await getImageByName()
-    }
+        console.log("name: " + coverImage?.name)
+        console.log("coverImage: " + coverImageUrl);
 
-    async function getImageByName() {
-        const s3ObjectUrl = parseUrl(coverImageUrl);
-        const presigner = new S3RequestPresigner({
-            credentials: {
-                accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
-                secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACCESS_KEY
-            },
-            region: process.env.REACT_APP_S3_BUCKET_REGION,
-
-            sha256: Hash.bind(null, "sha256"),
-        });
-        const url = await presigner.presign(new HttpRequest(s3ObjectUrl));
-        setImage(formatUrl(url).toString())
     }
 
     function createS3Client() {
@@ -115,19 +85,21 @@ function CreateReview() {
 
         event.preventDefault()
 
-        if (newCategoryName !== ''){
+        await handleUploadImage()
+
+        if (newCategoryName !== '') {
             setCategory(newCategoryName)
         }
-        if (newSubjectName !== ''){
+        if (newSubjectName !== '') {
             setSubject(newSubjectName)
         }
 
         const review: IReview = {
             title: title,
             text: text,
-            coverImageUrl: coverImageUrl,
+            coverImageUrl: s3BaseUrl + coverImage?.name,
             subject: {
-                name:  subject,
+                name: subject,
                 category: {
                     name: category
                 }
@@ -155,123 +127,230 @@ function CreateReview() {
     }, [])
 
     return (
-        <div className="container mx-auto px-4 h-full ">
-            <form onSubmit={addReview}>
+        <form onSubmit={addReview}>
+            <div className="min-h-screen p-6 bg-gray-100 flex items-center justify-center">
+                <div className="container max-w-screen-lg mx-auto">
+                    <div>
+                        <h2 className="font-semibold text-xl text-gray-600 mb-6">Create new review</h2>
+                        <div className="bg-white rounded shadow-lg p-4 px-4 md:p-8 mb-6">
 
-                <div className="relative w-full mb-3">
-                    <label
-                        className="block uppercase text-gray-700 text-xs font-bold mb-2"
-                        htmlFor="category"
-                    >
-                        Select a category:
-                    </label>
-                    <select
-                        name="category"
-                        className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring "
-                        onChange={event => setCategory(event.target.value)}
-                    >
-                        {categories.map((category) => (
-                            <option value={category.name}>{category.name}</option>
-                        ))}
-                    </select>
 
-                    <label
-                        className="block uppercase text-gray-700 text-xs font-bold mb-2"
-                        htmlFor="category"
-                    >
-                        Or create new category:
-                    </label>
-                    <input
-                        name="title"
-                        className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow"
-                        type="text"
-                        placeholder='New category'
-                        value={newCategoryName}
-                        onChange={event => setNewCategoryName(event.target.value)}
-                    />
-                </div>
-                <div className="relative w-full mb-3">
-                    <label
-                        className="block uppercase text-gray-700 text-xs font-bold mb-2"
-                        htmlFor="subject"
-                    >
-                        Select a subject:
-                    </label>
-                    <select
-                        name="subject"
-                        className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring "
-                        onChange={event => setSubject(event.target.value)}
-                    >
-                        {subjects.map((subject) => (
-                            <option value={subject.name}>{subject.name}</option>
-                        ))}
-                    </select>
+                            {/*Category*/}
+                            <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
+                                <div className="text-gray-600">
+                                    <p className="font-medium text-lg">Category</p>
+                                </div>
+                                <div className="lg:col-span-2">
+                                    <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-5">
 
-                    <label
-                        className="block uppercase text-gray-700 text-xs font-bold mb-2"
-                        htmlFor="newSubject"
-                    >
-                        Or create new subject:
-                    </label>
-                    <input
-                        name="newSubject"
-                        className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow"
-                        type="text"
-                        placeholder='New subject'
-                        value={newSubjectName}
-                        onChange={event => setNewSubjectName(event.target.value)}
-                    />
-                </div>
-                <div className="relative w-full mb-3">
-                    <label
-                        className="block uppercase text-gray-700 text-xs font-bold mb-2"
-                        htmlFor="title"
-                    >
-                        Title
-                    </label>
-                    <input
-                        name="title"
-                        className="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow"
-                        type="text"
-                        placeholder='Title'
-                        value={title}
-                        onChange={event => setTitle(event.target.value)}
-                    />
-                </div>
+                                        <div className="md:col-span-2">
+                                            <label htmlFor="category">
+                                                Select a category:
+                                            </label>
+                                            <select
+                                                name="category"
+                                                className="h-10 border mt-1 rounded px-4 w-full bg-gray-50 mb-2"
+                                                onChange={event => setCategory(event.target.value)}
+                                            >
+                                                {categories.map((category) => (
+                                                    <option value={category.name}>{category.name}</option>
+                                                ))}
+                                            </select>
+                                            <label
+                                                className="text-gray-500"
+                                                htmlFor="category">
+                                                Or create a new category:
+                                            </label>
+                                            <input
+                                                name="title"
+                                                className="h-10 border mt-1 rounded px-4 w-full bg-gray-50 mb-2"
+                                                type="text"
+                                                placeholder='New category'
+                                                value={newCategoryName}
+                                                onChange={event => setNewCategoryName(event.target.value)}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-                <MarkdownEditor
-                    value={text}
-                    height="600px"
-                    visible={true}
-                    onChange={(value, viewUpdate) => setText(value)}
-                />
 
-                <div className="relative w-full mb-3">
-                    <input
-                        type="file"
-                        // @ts-ignore
-                        onChange={event => (setCoverImage(event.target.files[0]))}
-                    />
-                </div>
+                            {/*Subject*/}
+                            <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
+                                <div className="text-gray-600">
+                                    <p className="font-medium text-lg">Subject</p>
+                                </div>
+                                <div className="lg:col-span-2">
+                                    <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-5">
+                                        <div className="md:col-span-2">
+                                            <label htmlFor="subject">
+                                                Select a subject:
+                                            </label>
+                                            <select
+                                                name="subject"
+                                                className="h-10 border mt-1 rounded px-4 w-full bg-gray-50 mb-2"
+                                                onChange={event => setSubject(event.target.value)}
+                                            >
+                                                {subjects.map((subject) => (
+                                                    <option value={subject.name}>{subject.name}</option>
+                                                ))}
+                                            </select>
+                                            <label
+                                                className="text-gray-500"
+                                                htmlFor="newSubject">
+                                                Or create a new subject:
+                                            </label>
+                                            <input
+                                                name="newSubject"
+                                                className="h-10 border mt-1 rounded px-4 w-full bg-gray-50 mb-2"
+                                                type="text"
+                                                placeholder='New subject'
+                                                value={newSubjectName}
+                                                onChange={event => setNewSubjectName(event.target.value)}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-                <div className="mb-3 border-amber-800 border-solid bg-purple-50">
 
-                    {tags.map((tag, index) => (
-                        <div key={index}>
-                            <span>{tag}</span>
-                            <span className="cursor-pointer" onClick={() => removeTag(index)}>&times;</span>
+                            {/*Title*/}
+                            <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
+                                <div className="text-gray-600">
+                                    <p className="font-medium text-lg">Title</p>
+                                </div>
+                                <div className="lg:col-span-2">
+                                    <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-5">
+                                        <div className="md:col-span-5">
+                                            <label htmlFor="title">
+                                                Title
+                                            </label>
+                                            <input
+                                                name="title"
+                                                className="h-10 border mt-1 rounded px-4 w-full bg-gray-50 mb-2"
+                                                type="text"
+                                                value={title}
+                                                onChange={event => setTitle(event.target.value)}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            {/*Image*/}
+
+                            <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
+                                <div className="text-gray-600">
+                                    <p className="font-medium text-lg">Cover image</p>
+                                </div>
+                                <div className="lg:col-span-2">
+                                    <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-5">
+                                        <div className="md:col-span-5">
+                                            <div className="max-w-2xl mx-auto">
+
+                                                <div className="flex items-center justify-center w-full">
+                                                    <label htmlFor="dropzone-file"
+                                                           className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+                                                        <div
+                                                            className="flex flex-col items-center justify-center pt-5 pb-6">
+                                                            <svg className="w-10 h-10 mb-3 text-gray-400"
+                                                                 fill="none" stroke="currentColor"
+                                                                 viewBox="0 0 24 24"
+                                                                 xmlns="http://www.w3.org/2000/svg">
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                      stroke-width="2"
+                                                                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                                            </svg>
+                                                            <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                                                                    <span
+                                                                        className="font-semibold">Click to upload</span> or
+                                                                drag and drop</p>
+                                                            <p className="text-xs text-gray-500 dark:text-gray-400">SVG,
+                                                                PNG, JPG or GIF (MAX. 800x400px)</p>
+                                                        </div>
+                                                        <input
+                                                            id="dropzone-file"
+                                                            type="file"
+                                                            // className="hidden"
+                                                            // @ts-ignore
+                                                            onChange={event => setCoverImage(event.target.files[0])}
+                                                        />
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/*<div className="relative w-full mb-3">*/}
+                                {/*    <input*/}
+                                {/*        type="file"*/}
+                                {/*        // @ts-ignore*/}
+                                {/*        onChange={event => (setCoverImage(event.target.files[0]))}*/}
+                                {/*    />*/}
+                                {/*</div>*/}
+
+                                {/*<p className="mt-5">This file input component is part of a larger, open-source library of Tailwind CSS components. Learn*/}
+                                {/*    more*/}
+                                {/*    by going to the official <a className="text-blue-600 hover:underline"*/}
+                                {/*                                href="#" target="_blank">Flowbite Documentation</a>.*/}
+                                {/*</p>*/}
+                                {/*<script src="https://unpkg.com/flowbite@1.4.0/dist/flowbite.js"></script>*/}
+                            </div>
+
+
+                            {/*Tags*/}
+                            <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
+                                <div className="text-gray-600">
+                                    <p className="font-medium text-lg">Tags</p>
+                                    <p>Enter tags separated by spaces.</p>
+                                </div>
+                                <div className="lg:col-span-2">
+                                    <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-5">
+                                        <div className="md:col-span-5">
+                                            <div className="flex flex-wrap border-2 gap-0.5 mt-2 h-10">
+                                                {tags.map((tag, index) => (
+                                                    <div
+                                                        className="bg-gray-300 pl-0.5 pr-1"
+                                                        key={index}>
+                                                        <span>{tag}</span>
+                                                        <span className="cursor-pointer"
+                                                              onClick={() => removeTag(index)}>&times;</span>
+                                                    </div>
+                                                ))}
+
+                                                <input onChange={event => handleChange(event)} className="flex-grow"
+                                                       type="text"
+                                                       placeholder="tags"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            {/*Text*/}
+                            <MarkdownEditor
+                                value={text}
+                                height="600px"
+                                visible={true}
+                                className="mt-20"
+                                onChange={(value, viewUpdate) => setText(value)}
+                            />
+
+                            <button
+                                className="text-white bg-gray-400 mt-10"
+                                type="submit"
+                            >
+                                Add new review
+                            </button>
                         </div>
-                    ))}
-
-                    <input onChange={event => handleChange(event)} className="flex-grow" type="text"
-                           placeholder="tags"/>
+                    </div>
                 </div>
+            </div>
 
-
-                <button type="submit">Add new review</button>
-
-            </form>
-        </div>
+        </form>
     )
 }
 
