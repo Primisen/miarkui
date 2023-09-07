@@ -1,16 +1,15 @@
 import React, {useEffect, useState} from "react";
-import {Prereview} from "../components/Prereview";
-import axios from "axios";
+import {PreviewReview} from "../components/PreviewReview";
 import {IReview} from "../models/review";
+import API from '../api'
 
 function Home() {
 
     const [review, setReview] = useState<IReview[]>([])
 
     async function fetchReview() {
-        const response = await axios.get<IReview[]>('http://localhost:4001/reviews')
+        const response = await API.get<IReview[]>('/reviews')
         setReview(response.data);
-        console.log(response)
     }
 
     useEffect(() => {
@@ -19,7 +18,7 @@ function Home() {
 
     return (
         <div>
-            {review.map(review => <Prereview review={review} key={review.id}/>)}
+            {review.map(review => <PreviewReview review={review} key={review.id}/>)}
         </div>
     );
 }

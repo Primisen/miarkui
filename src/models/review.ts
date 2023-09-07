@@ -1,3 +1,5 @@
+import {IComment} from "./comment";
+
 export interface IReview {
     id?: number
     title: string
@@ -13,4 +15,7 @@ export interface IReview {
     },
     tags: string []
     userId: number
+    comments?: [
+        IComment
+    ]
 }

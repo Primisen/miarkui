@@ -2,7 +2,7 @@ import {Link} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import {IReview} from "../models/review";
 import API from '../api'
-import {Prereview} from "../components/Prereview";
+import {PreviewReview} from "../components/PreviewReview";
 import DeleteReview from "../components/DeleteReview";
 
 function Account() {
@@ -35,7 +35,7 @@ function Account() {
 
             {review.map((review) => (
                 <div>
-                    <Prereview review={review} key={review.id}/>
+                    <PreviewReview review={review} key={review.id}/>
                     <DeleteReview reviewId={review.id!} key={review.title}/>
                 </div>))
             }
