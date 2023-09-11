@@ -15,7 +15,7 @@ function CreateComment() {
         const newComment: IComment = {
             text: data.textComment,
             reviewId: Number(id),
-            userId: Number(localStorage.getItem('userId'))
+            user: {id: Number(localStorage.getItem('userId'))}
         }
 
         await API.post('/comments', newComment)

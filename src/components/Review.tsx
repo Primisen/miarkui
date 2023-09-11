@@ -9,6 +9,7 @@ import {HttpRequest} from "@aws-sdk/protocol-http";
 import {formatUrl} from "@aws-sdk/util-format-url";
 import CommentTree from "./CommentTree";
 import LikeButton from "./LikeButton";
+import Typography from "@mui/material/Typography";
 
 function Review() {
 
@@ -64,14 +65,19 @@ function Review() {
     return (
         <div className="container mx-auto items-center ">
 
-            <p>{review.subject.category.name}</p>
-            <h1>{review.subject.name} review</h1>
-            <p>{review.title}</p>
+            <Typography variant='button'>{review.subject.category.name}</Typography>
+            <Typography variant='h2'>{review.subject.name}: review</Typography>
+            <Typography variant='h5'>{review.title}</Typography>
 
             <img src={review.coverImageUrl}/>
-            {review?.text}
 
-            {review.tags.map((tag) => <p>{tag.name}</p>)}
+            <Typography variant='body1'>
+                {review?.text}
+            </Typography>
+
+            {review.tags.map((tag) =>
+                <Typography variant='button' display='block'>{tag.name}</Typography>)
+            }
 
             <LikeButton/>
             <CommentTree comments={review?.comments!}/>

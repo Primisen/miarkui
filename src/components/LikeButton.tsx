@@ -1,4 +1,5 @@
-import {useState} from "react";
+import React, {useState} from "react";
+import FavoriteIcon from '@mui/icons-material/Favorite';
 
 function LikeButton () {
 
@@ -16,7 +17,9 @@ function LikeButton () {
 
     return (
         <button className={ `like-button ${isClicked && 'liked'}` } onClick={ handleClick }>
-            <span className="likes-counter">{ `Like | ${likes}` }</span>
+            {/*<span className="likes-counter">{ `Like | ${likes}` }</span>*/}
+            <span className="likes-counter"> <FavoriteIcon /> {likes} </span>
+
         </button>
     );
 }

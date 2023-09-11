@@ -6,6 +6,10 @@ import {Hash} from "@smithy/hash-node";
 import {HttpRequest} from "@aws-sdk/protocol-http";
 import {formatUrl} from "@aws-sdk/util-format-url";
 import {Link} from "react-router-dom";
+import Card from '@mui/material/Card';
+import {Avatar, Box, Button, CardActions, CardContent, CardMedia, Grid, Paper} from "@mui/material";
+import Typography from "@mui/material/Typography";
+import {flexbox} from "@chakra-ui/react";
 
 interface ReviewProps {
     review: IReview
@@ -36,59 +40,57 @@ export function PreviewReview({review}: ReviewProps) {
     }, []);
 
     return (
-        // <div>
-        //     {review.text}
-        // </div>
+        <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            width='1040'
+            my={2}
+        >
 
-        <div className=" flex flex-col bg-white py-4 px-12">
-            {/*<div className="py-4">*/}
-            {/*    <div className="pl-[116px] pr-[205px] py-8">*/}
-            {/*        <div className="text-7xl text-black">Title</div>*/}
-            {/*        <div className="lead-xl font-light ">Subtitle with a long long long long long long text</div>*/}
-            {/*    </div>*/}
-            {/*</div>*/}
+            <Card sx={{maxWidth: 1040}}>
+                <CardMedia
+                    sx={{height: 600}}
+                    image={image}
+                    title={review.title}
+                />
+                <div className='bg-yellow-500'>
+                    <CardContent>
+                        <Typography gutterBottom variant="h5" component="div">
+                            {review.title}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary" noWrap>
+                            {review.text}
+                        </Typography>
+                    </CardContent>
+                    <CardActions>
+                        <Button size="small">
+                            <Link
+                                to={'/reviews/' + review.id}
+                                className="py-3 px-6 bg-white text-primary-200 paragraph-m  rounded-full"
+                            >
+                                Read More
+                            </Link>
+                        </Button>
+                    </CardActions>
+                </div>
+            </Card>
+
             <div className="flex flex-col px-20 md:px-10  items-center justify-center gap-6">
-            {/*<div className="flex flex-col px-20 md:px-10  items-center justify-center gap-6">*/}
                 <div>
-                    {/*<img src="https://cdn.pixabay.com/photo/2023/08/15/11/47/mushroom-8191823_1280.jpg"*/}
-                    {/*     alt="Featured Image 1" className="rounded-t-xl"/>*/}
                     <img src={image}
                          alt="Featured Image 1"
                          className="rounded-t-xl "
-                        width="1007px"
+                         width="1007px"
                     />
-
                     <div className=" px-9 pt-10 pb-14 bg-yellow-500 rounded-b-lg">
                         <div className="text-white space-y-4">
                             <h3 className="text-xl font-bold lead-xl bold">{review.title}</h3>
-                            <div className="text-lg font-light">Card subtitle with a long long long long long long
-                                text
+                            <div className="text-lg font-light">
+                                Card subtitle with a long long long long long long text
                             </div>
-                            <div className=" text-lg font-light">
-                                {/*{review.text.substring(0, 300)}*/}
-                            </div >
                         </div>
                         <div className="flex justify-between pt-8">
-                            {/*<ul className="flex flex-col gap-y-2.5">*/}
-                            {/*    <li className="flex space-x-3 text-white">*/}
-                            {/*        <img width="50" height="50"*/}
-                            {/*             src="https://img.icons8.com/ios-filled/50/FFFFFF/checked--v1.png"*/}
-                            {/*             alt="checked--v1" className="w-6 h-6"/>*/}
-                            {/*        <span className="paragraph-l font-bold">Item 1</span>*/}
-                            {/*    </li>*/}
-                            {/*    <li className="flex space-x-3 text-white">*/}
-                            {/*        <img width="50" height="50"*/}
-                            {/*             src="https://img.icons8.com/ios-filled/50/FFFFFF/checked--v1.png"*/}
-                            {/*             alt="checked--v1" className="w-6 h-6"/>*/}
-                            {/*        <span className="paragraph-l font-bold">Item 1</span>*/}
-                            {/*    </li>*/}
-                            {/*    <li className="flex space-x-3 text-white">*/}
-                            {/*        <img width="50" height="50"*/}
-                            {/*             src="https://img.icons8.com/ios-filled/50/FFFFFF/checked--v1.png"*/}
-                            {/*             alt="checked--v1" className="w-6 h-6"/>*/}
-                            {/*        <span className="paragraph-l font-bold">Item 1</span>*/}
-                            {/*    </li>*/}
-                            {/*</ul>*/}
                             <div className="flex flex-col justify-end">
                                 <Link
                                     to={'/reviews/' + review.id}
@@ -101,6 +103,93 @@ export function PreviewReview({review}: ReviewProps) {
                     </div>
                 </div>
             </div>
-        </div>
+        </Box>
+
+
+        // <div className=" flex flex-col bg-white py-4 px-12">
+        //
+        //     {/*<Card sx={{ maxWidth: 345 }}>*/}
+        //     {/*    <CardMedia*/}
+        //     {/*        sx={{ height: 140 }}*/}
+        //     {/*        image="/static/images/cards/contemplative-reptile.jpg"*/}
+        //     {/*        title="green iguana"*/}
+        //     {/*    />*/}
+        //     {/*    <CardContent>*/}
+        //     {/*        <Typography gutterBottom variant="h5" component="div">*/}
+        //     {/*            Lizard*/}
+        //     {/*        </Typography>*/}
+        //     {/*        <Typography variant="body2" color="text.secondary">*/}
+        //     {/*            Lizards are a widespread group of squamate reptiles, with over 6,000*/}
+        //     {/*            species, ranging across all continents except Antarctica*/}
+        //     {/*        </Typography>*/}
+        //     {/*    </CardContent>*/}
+        //     {/*    <CardActions>*/}
+        //     {/*        <Button size="small">Learn More</Button>*/}
+        //     {/*    </CardActions>*/}
+        //     {/*</Card>*/}
+        //
+        //     {/*<div className="py-4">*/}
+        //     {/*    <div className="pl-[116px] pr-[205px] py-8">*/}
+        //     {/*        <div className="text-7xl text-black">Title</div>*/}
+        //     {/*        <div className="lead-xl font-light ">Subtitle with a long long long long long long text</div>*/}
+        //     {/*    </div>*/}
+        //     {/*</div>*/}
+        //
+        //     <div className="flex flex-col px-20 md:px-10  items-center justify-center gap-6">
+        //         {/*<div className="flex flex-col px-20 md:px-10  items-center justify-center gap-6">*/}
+        //         <div>
+        //             {/*<img src="https://cdn.pixabay.com/photo/2023/08/15/11/47/mushroom-8191823_1280.jpg"*/}
+        //             {/*     alt="Featured Image 1" className="rounded-t-xl"/>*/}
+        //             <img src={image}
+        //                  alt="Featured Image 1"
+        //                  className="rounded-t-xl "
+        //                  width="1007px"
+        //             />
+        //
+        //             <div className=" px-9 pt-10 pb-14 bg-yellow-500 rounded-b-lg">
+        //                 <div className="text-white space-y-4">
+        //                     <h3 className="text-xl font-bold lead-xl bold">{review.title}</h3>
+        //                     <div className="text-lg font-light">
+        //                         Card subtitle with a long long long long long long text
+        //                     </div>
+        //
+        //                     <div className=" text-lg font-light">
+        //                         {/*{review.text.substring(0, 300)}*/}
+        //                     </div>
+        //                 </div>
+        //                 <div className="flex justify-between pt-8">
+        //                     {/*<ul className="flex flex-col gap-y-2.5">*/}
+        //                     {/*    <li className="flex space-x-3 text-white">*/}
+        //                     {/*        <img width="50" height="50"*/}
+        //                     {/*             src="https://img.icons8.com/ios-filled/50/FFFFFF/checked--v1.png"*/}
+        //                     {/*             alt="checked--v1" className="w-6 h-6"/>*/}
+        //                     {/*        <span className="paragraph-l font-bold">Item 1</span>*/}
+        //                     {/*    </li>*/}
+        //                     {/*    <li className="flex space-x-3 text-white">*/}
+        //                     {/*        <img width="50" height="50"*/}
+        //                     {/*             src="https://img.icons8.com/ios-filled/50/FFFFFF/checked--v1.png"*/}
+        //                     {/*             alt="checked--v1" className="w-6 h-6"/>*/}
+        //                     {/*        <span className="paragraph-l font-bold">Item 1</span>*/}
+        //                     {/*    </li>*/}
+        //                     {/*    <li className="flex space-x-3 text-white">*/}
+        //                     {/*        <img width="50" height="50"*/}
+        //                     {/*             src="https://img.icons8.com/ios-filled/50/FFFFFF/checked--v1.png"*/}
+        //                     {/*             alt="checked--v1" className="w-6 h-6"/>*/}
+        //                     {/*        <span className="paragraph-l font-bold">Item 1</span>*/}
+        //                     {/*    </li>*/}
+        //                     {/*</ul>*/}
+        //                     <div className="flex flex-col justify-end">
+        //                         <Link
+        //                             to={'/reviews/' + review.id}
+        //                             className="py-3 px-6 bg-white text-primary-200 paragraph-m  rounded-full"
+        //                         >
+        //                             Read More
+        //                         </Link>
+        //                     </div>
+        //                 </div>
+        //             </div>
+        //         </div>
+        //     </div>
+        // </div>
     )
 }

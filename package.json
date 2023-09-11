@@ -14,6 +14,7 @@
     "@emotion/styled": "^11.11.0",
     "@heroicons/react": "^2.0.18",
     "@material-tailwind/react": "^2.1.1",
+    "@mui/icons-material": "^5.14.8",
     "@mui/material": "^5.14.8",
     "@smithy/hash-node": "^2.0.5",
     "@testing-library/jest-dom": "^5.17.0",

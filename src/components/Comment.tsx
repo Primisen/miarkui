@@ -1,15 +1,18 @@
 import {IComment} from "../models/comment";
+import {ListItemText} from "@mui/material";
+import React from "react";
 
 interface CommentProps {
     comment: IComment
 }
 
-function Comment ({comment}: CommentProps) {
+function Comment({comment}: CommentProps) {
 
     return (
-        <div>
-            {comment.text}
-        </div>
+        <ListItemText
+            primary={comment.user?.username}
+            secondary={comment.text}
+        />
     )
 }
 
