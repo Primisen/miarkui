@@ -5,6 +5,9 @@ import API from '../api'
 import {ICategory} from "../models/category";
 import {ISubject} from "../models/subject";
 import {IReview} from "../models/review";
+import Typography from "@mui/material/Typography";
+import {Button, Rating} from "@mui/material";
+import {ITag} from "../models/tag";
 
 function CreateReview() {
 
@@ -24,13 +27,14 @@ function CreateReview() {
 
     const [coverImage, setCoverImage] = useState<File>()
     const [coverImageUrl, setCoverImageUrl] = useState('')
-    const [tags, setTags] = useState(["Movie", "Comedy"])
+    const [tags, setTags] = useState<ITag []>([])
     const [categories, setCategories] = useState<ICategory[]>([])
     const [subjects, setSubjects] = useState<ISubject[]>([])
     const [newCategoryName, setNewCategoryName] = useState('')
     const [newSubjectName, setNewSubjectName] = useState('')
     const [category, setCategory] = useState('')
     const [subject, setSubject] = useState('')
+    const [rating, setRating] = useState(0)
 
     function removeTag(index: number) {
         setTags(tags.filter((element, i) => i !== index))
@@ -38,7 +42,13 @@ function CreateReview() {
 
     function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
         if (event.target.value.includes(" ")) {
-            setTags([...tags, event.target.value])
+            // setTags([...tags, name: event.target.value])
+            setTags( [
+                ...tags,
+                {name: event.target.value}
+            ])
+
+            // console.log(tags.length)
             event.target.value = ''
         }
     }
@@ -100,6 +110,7 @@ function CreateReview() {
             coverImageUrl: s3BaseUrl + coverImage?.name,
             subject: {
                 name: subject,
+                rating: rating,
                 category: {
                     name: category
                 }
@@ -314,13 +325,14 @@ function CreateReview() {
                                                     <div
                                                         className="bg-gray-300 pl-0.5 pr-1"
                                                         key={index}>
-                                                        <span>{tag}</span>
+                                                        <span>{tag.name}</span>
                                                         <span className="cursor-pointer"
                                                               onClick={() => removeTag(index)}>&times;</span>
                                                     </div>
                                                 ))}
 
-                                                <input onChange={event => handleChange(event)} className="flex-grow"
+                                                <input onChange={event => handleChange(event)}
+                                                       className="flex-grow"
                                                        type="text"
                                                        placeholder="tags"/>
                                             </div>
@@ -339,12 +351,19 @@ function CreateReview() {
                                 onChange={(value, viewUpdate) => setText(value)}
                             />
 
-                            <button
-                                className="text-white bg-gray-400 mt-10"
+                            <Typography component="legend">Your rating:</Typography>
+                            <Rating
+                                name="customized-10"
+                                defaultValue={5}
+                                max={10}
+                                onChange={(element, rating) => setRating(rating!)}/>
+
+                            <Button
+                                variant="outlined"
                                 type="submit"
                             >
                                 Add new review
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </div>

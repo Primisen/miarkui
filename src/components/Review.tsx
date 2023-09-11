@@ -13,12 +13,23 @@ import LikeButton from "./LikeButton";
 function Review() {
 
     const {id} = useParams();
-    const [review, setReview] = useState<IReview>()
-
-    const [image, setImage] = useState('')
+    const initReview = {
+        title: '',
+        text: '',
+        coverImageUrl: '',
+        subject: {
+            name: '',
+            rating: 0,
+            category: {
+                name: ''
+            },
+        },
+        tags: [{name: ''}],
+        userId: 0
+    }
+    const [review, setReview] = useState<IReview>(initReview)
 
     async function fetchImages(coverImageUrl: string) {
-        // @ts-ignore
         const s3ObjectUrl = parseUrl(coverImageUrl);
         const presigner = new S3RequestPresigner({
             credentials: {
@@ -29,33 +40,40 @@ function Review() {
             sha256: Hash.bind(null, "sha256"),
         });
         const url = await presigner.presign(new HttpRequest(s3ObjectUrl));
-        setImage(formatUrl(url).toString())
-        console.log("image: " + image)
+
+        const response = await API.get<IReview>('/reviews/' + id)
+        setReview(response.data);
+
+        setReview({
+            ...response.data,
+            coverImageUrl: formatUrl(url).toString()
+        })
+
     }
 
     async function fetchReview() {
         const response = await API.get<IReview>('/reviews/' + id)
         setReview(response.data);
         await fetchImages(response.data.coverImageUrl)
-        console.log("review comments: " + review?.comments )
     }
 
     useEffect(() => {
-
-        // const fetchData = async () => {
-        //     await fetchReview()
-        // }
-        // fetchData()
         fetchReview();
     }, []);
 
     return (
-        <div className="container mx-auto  items-center ">
-            review
-            <img src={image} />
+        <div className="container mx-auto items-center ">
+
+            <p>{review.subject.category.name}</p>
+            <h1>{review.subject.name} review</h1>
+            <p>{review.title}</p>
+
+            <img src={review.coverImageUrl}/>
             {review?.text}
 
-            <LikeButton />
+            {review.tags.map((tag) => <p>{tag.name}</p>)}
+
+            <LikeButton/>
             <CommentTree comments={review?.comments!}/>
         </div>
     )
