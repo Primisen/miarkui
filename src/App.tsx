@@ -1,4 +1,5 @@
 import React from 'react';
+import {createContext} from 'react';
 import Navbar from "./components/Navbar";
 import {Route, Routes} from "react-router-dom";
 import Home from "./pages/Home";
@@ -8,21 +9,53 @@ import CreateReview from "./pages/CreateReview";
 import Logout from "./components/Logout";
 import Account from "./pages/Account";
 import Review from "./components/Review";
+import {createTheme, CssBaseline, ThemeProvider} from "@mui/material";
+
+export const ColorModeContext = createContext({
+    toggleColorMode: () => {
+    }
+});
 
 function App() {
+
+    const [mode, setMode] = React.useState<'light' | 'dark'>('light');
+    const colorMode = React.useMemo(
+        () => ({
+            toggleColorMode: () => {
+                setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
+            },
+        }),
+        [],
+    );
+
+    const theme = React.useMemo(
+        () =>
+            createTheme({
+                palette: {
+                    mode,
+                },
+            }),
+        [mode],
+    );
+
     return (
-        <div>
-            <Navbar/>
-            <Routes>
-                <Route path='/' element={<Home/>}></Route>
-                <Route path='/login' element={<Login/>}></Route>
-                <Route path='/logout' element={<Logout/>}></Route>
-                <Route path='/registration' element={<Registration/>}></Route>
-                <Route path='/account' element={<Account/>}></Route>
-                <Route path='/reviews' element={<CreateReview/>}></Route>
-                <Route path='/reviews/:id' element={<Review/>}></Route>
-            </Routes>
-        </div>
+        <>
+            <ColorModeContext.Provider value={colorMode}>
+                <ThemeProvider theme={theme}>
+                    <Navbar/>
+                    <CssBaseline/>
+                    <Routes>
+                        <Route path='/' element={<Home/>}></Route>
+                        <Route path='/login' element={<Login/>}></Route>
+                        <Route path='/logout' element={<Logout/>}></Route>
+                        <Route path='/registration' element={<Registration/>}></Route>
+                        <Route path='/account' element={<Account/>}></Route>
+                        <Route path='/reviews' element={<CreateReview/>}></Route>
+                        <Route path='/reviews/:id' element={<Review/>}></Route>
+                    </Routes>
+                </ThemeProvider>
+            </ColorModeContext.Provider>
+        </>
     );
 }
 
