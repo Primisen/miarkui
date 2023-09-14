@@ -1,24 +1,26 @@
 import React, {useEffect, useState} from "react";
 import {PreviewReview} from "../components/PreviewReview";
 import {IReview} from "../models/review";
-import API from '../api'
+import {getAllReviews} from "../shared/api/requests/review";
 
 function Home() {
 
-    const [review, setReview] = useState<IReview[]>([])
-
-    async function fetchReview() {
-        const response = await API.get<IReview[]>('/reviews')
-        setReview(response.data);
-    }
+    const [reviews, setReviews] = useState<IReview[]>([])
 
     useEffect(() => {
-        fetchReview()
+        const fetchData = async () => {
+            return  await getAllReviews();
+        }
+
+        fetchData()
+            .then((data) => {
+                setReviews(data)
+            })
     }, [])
 
     return (
         <>
-            {review.map(review => <PreviewReview review={review} key={review.id}/>)}
+            {reviews.map(review => <PreviewReview review={review} key={review.id}/>)}
         </>
     );
 }

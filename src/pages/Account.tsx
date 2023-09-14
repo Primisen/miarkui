@@ -1,26 +1,24 @@
 import {Link} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import {IReview} from "../models/review";
-import API from '../api'
 import {PreviewReview} from "../components/PreviewReview";
 import DeleteReview from "../components/DeleteReview";
+import {getAllReviews} from "../shared/api/requests/review";
 
 function Account() {
 
-    const [review, setReview] = useState<IReview[]>([])
-
-    async function fetchReview () {
-
-        const userId = localStorage.getItem('userId');
-        const reviews = await API.get<IReview[]>('/users/'+ userId + '/reviews');
-
-        setReview(reviews.data);
-        console.log("reviews: " + review)
-    }
+    const [reviews, setReviews] = useState<IReview[]>([])
 
     useEffect(() => {
-        fetchReview()
-    }, []);
+        const fetchData = async () => {
+            return await getAllReviews();
+        }
+
+        fetchData()
+            .then((data) => {
+                setReviews(data)
+            })
+    }, [])
 
     return (
         <div>
@@ -33,13 +31,12 @@ function Account() {
                 </span>
             </Link>
 
-            {review.map((review) => (
+            {reviews.map((review) => (
                 <div>
                     <PreviewReview review={review} key={review.id}/>
                     <DeleteReview reviewId={review.id!} key={review.title}/>
                 </div>))
             }
-
         </div>
     )
 }
