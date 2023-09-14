@@ -6,7 +6,7 @@ import {ICategory} from "../models/category";
 import {ISubject} from "../models/subject";
 import {IReview} from "../models/review";
 import Typography from "@mui/material/Typography";
-import {Button, Rating} from "@mui/material";
+import {Autocomplete, Button, Chip, Rating, TextField} from "@mui/material";
 import {ITag} from "../models/tag";
 
 function CreateReview() {
@@ -147,6 +147,18 @@ function CreateReview() {
 
 
                             {/*Category*/}
+
+                            <Autocomplete
+                                disablePortal
+                                id="combo-box-demo"
+                                options={categories}
+                                sx={{ width: 300 }}
+                                renderInput={(params) => <TextField {...params} label="Movie" />}
+                            />
+
+
+
+
                             <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
                                 <div className="text-gray-600">
                                     <p className="font-medium text-lg">Category</p>
@@ -312,6 +324,32 @@ function CreateReview() {
 
 
                             {/*Tags*/}
+
+
+
+                            <Autocomplete
+                                multiple
+                                id="tags-filled"
+                                options={tags.map((tag) => tag.name)}
+                                defaultValue={[tags[13].name]}
+                                freeSolo
+                                renderTags={(value: readonly string[], getTagProps) =>
+                                    value.map((option: string, index: number) => (
+                                        <Chip variant="outlined" label={option} {...getTagProps({ index })} />
+                                    ))
+                                }
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        variant="filled"
+                                        label="freeSolo"
+                                        placeholder="Favorites"
+                                    />
+                                )}
+                            />
+
+
+
                             <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
                                 <div className="text-gray-600">
                                     <p className="font-medium text-lg">Tags</p>

@@ -4,6 +4,8 @@ import {Link} from "react-router-dom";
 import Logout from "./Logout";
 import Search from "./Search";
 import LightbulbIcon from '@mui/icons-material/Lightbulb';
+import ToggleTheme from "./ToggleTheme";
+import LanguageChooser from "./LanguageChooser";
 
 function Navbar() {
 
@@ -13,7 +15,7 @@ function Navbar() {
                 <Container maxWidth="xl">
                     <Toolbar>
                         <LightbulbIcon/>
-                            <Typography
+                        <Typography
                             variant="h6"
                             noWrap
                             component="a"
@@ -31,8 +33,9 @@ function Navbar() {
                             MIARKUI
                         </Typography>
 
-                        <Search />
-
+                        <Search/>
+                        <ToggleTheme/>
+                        <LanguageChooser/>
 
                         {(localStorage.getItem('token') != null)
                             ?
@@ -43,6 +46,7 @@ function Navbar() {
                                         className="px-3 py-2 flex items-center text-xs  uppercase font-bold leading-snug text-white hover:opacity-75"
                                         to='/account'
                                     >
+                                      
                                     <span className='ml-2'>
                                         Account
                                     </span>

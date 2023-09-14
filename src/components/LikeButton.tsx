@@ -1,5 +1,6 @@
 import React, {useState} from "react";
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import {FavoriteBorder} from "@mui/icons-material";
 
 function LikeButton () {
 
@@ -19,7 +20,7 @@ function LikeButton () {
         <button className={ `like-button ${isClicked && 'liked'}` } onClick={ handleClick }>
             {/*<span className="likes-counter">{ `Like | ${likes}` }</span>*/}
             <span className="likes-counter"> <FavoriteIcon /> {likes} </span>
-
+                <FavoriteBorder/>
         </button>
     );
 }
