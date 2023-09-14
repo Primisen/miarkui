@@ -1,99 +1,87 @@
+import {AppBar, Box, Container, Toolbar, Typography} from "@mui/material";
 import React from "react";
 import {Link} from "react-router-dom";
 import Logout from "./Logout";
 import Search from "./Search";
+import LightbulbIcon from '@mui/icons-material/Lightbulb';
 
 function Navbar() {
 
     return (
-        <nav className="relative flex flex-wrap items-center justify-between px-2 py-3 bg-purple-500 mb-3">
-            <div className="container px-4 mx-auto flex flex-wrap items-center justify-between">
-                <div className="w-full relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start">
-                    <a
-                        className="text-sm font-bold leading-relaxed inline-block mr-4 py-2 whitespace-nowrap uppercase text-white"
-                        href="/"
-                    >
-                        Miarkui
-                    </a>
-                </div>
-                <div
-                    className={
-                        "lg:flex flex-grow items-center"
-                    }
-                    id="example-navbar-danger"
-                >
-                    <Search/>
+        <Box sx={{flexGrow: 1}}>
+            <AppBar position="static">
+                <Container maxWidth="xl">
+                    <Toolbar>
+                        <LightbulbIcon/>
+                            <Typography
+                            variant="h6"
+                            noWrap
+                            component="a"
+                            href="/"
+                            sx={{
+                                mr: 2,
+                                flexGrow: 2,
+                                fontFamily: 'monospace',
+                                fontWeight: 700,
+                                letterSpacing: '.3rem',
+                                color: 'inherit',
+                                textDecoration: 'none',
+                            }}
+                        >
+                            MIARKUI
+                        </Typography>
 
-                    {(localStorage.getItem('token') != null)
-                        ?
-                        <ul className="flex flex-col lg:flex-row list-none lg:ml-auto">
+                        <Search />
 
-                            <li className='nav-item'>
-                                <Link
-                                    className="px-3 py-2 flex items-center text-xs  uppercase font-bold leading-snug text-white hover:opacity-75"
-                                    to='/account'
-                                >
+
+                        {(localStorage.getItem('token') != null)
+                            ?
+                            <ul className="flex flex-col lg:flex-row list-none lg:ml-auto">
+
+                                <li className='nav-item'>
+                                    <Link
+                                        className="px-3 py-2 flex items-center text-xs  uppercase font-bold leading-snug text-white hover:opacity-75"
+                                        to='/account'
+                                    >
                                     <span className='ml-2'>
                                         Account
                                     </span>
-                                </Link>
-                            </li>
+                                    </Link>
+                                </li>
 
-                            <li className="nav-item">
-                                <Logout/>
-                            </li>
-                        </ul>
-                        :
-                        <ul className="flex flex-col lg:flex-row list-none lg:ml-auto">
-                            <li className="nav-item">
-                                <Link
-                                    className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
-                                    to='/login'
-                                >
+                                <li className="nav-item">
+                                    <Logout/>
+                                </li>
+                            </ul>
+                            :
+                            <ul className="flex flex-col lg:flex-row list-none lg:ml-auto">
+                                <li className="nav-item">
+                                    <Link
+                                        className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
+                                        to='/login'
+                                    >
                                     <span className="ml-2">
                                         Sign In
                                     </span>
-                                </Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link
-                                    className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
-                                    to="/registration"
-                                >
+                                    </Link>
+                                </li>
+                                <li className="nav-item">
+                                    <Link
+                                        className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
+                                        to="/registration"
+                                    >
                                     <span className="ml-2">
                                         Sign Up
                                     </span>
-                                </Link>
-                            </li>
-                        </ul>
+                                    </Link>
+                                </li>
+                            </ul>
+                        }
+                    </Toolbar>
+                </Container>
+            </AppBar>
+        </Box>
 
-                    }
-
-                    {/*<ul className="flex flex-col lg:flex-row list-none lg:ml-auto">*/}
-
-                    {/*    */}
-                    {/*    <li className="nav-item">*/}
-                    {/*        <Link*/}
-                    {/*            className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"*/}
-                    {/*            to='/login'*/}
-                    {/*        >*/}
-                    {/*            <i className="fab fa-twitter text-lg leading-lg text-white opacity-75"></i><span*/}
-                    {/*            className="ml-2">Sign In</span>*/}
-                    {/*        </Link>*/}
-                    {/*    </li>*/}
-                    {/*    <li className="nav-item">*/}
-                    {/*        <Link*/}
-                    {/*            className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"*/}
-                    {/*            to="/registration"*/}
-                    {/*        >*/}
-                    {/*            <i className="fab fa-pinterest text-lg leading-lg text-white opacity-75"></i><span*/}
-                    {/*            className="ml-2">Sign Up</span>*/}
-                    {/*        </Link>*/}
-                    {/*    </li>*/}
-                    {/*</ul>*/}
-                </div>
-            </div>
-        </nav>
     );
 
 }
