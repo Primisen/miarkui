@@ -43,13 +43,12 @@ function Navbar() {
 
                                 <li className='nav-item'>
                                     <Link
-                                        className="px-3 py-2 flex items-center text-xs  uppercase font-bold leading-snug text-white hover:opacity-75"
+                                        className="px-3 py-2 flex items-center uppercase font-bold leading-snug text-white hover:opacity-75"
                                         to='/account'
                                     >
-                                      
-                                    <span className='ml-2'>
-                                        Account
-                                    </span>
+                                        <Typography variant='subtitle2'>
+                                            Account
+                                        </Typography>
                                     </Link>
                                 </li>
 
@@ -61,22 +60,22 @@ function Navbar() {
                             <ul className="flex flex-col lg:flex-row list-none lg:ml-auto">
                                 <li className="nav-item">
                                     <Link
-                                        className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
+                                        className="px-3 py-2 flex items-center uppercase leading-snug hover:opacity-75"
                                         to='/login'
                                     >
-                                    <span className="ml-2">
-                                        Sign In
-                                    </span>
+                                        <Typography variant='subtitle2'>
+                                            Sign in
+                                        </Typography>
                                     </Link>
                                 </li>
                                 <li className="nav-item">
                                     <Link
-                                        className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
+                                        className="px-3 py-2 flex items-center uppercase leading-snug hover:opacity-75"
                                         to="/registration"
                                     >
-                                    <span className="ml-2">
-                                        Sign Up
-                                    </span>
+                                        <Typography variant='subtitle2'>
+                                            Sign up
+                                        </Typography>
                                     </Link>
                                 </li>
                             </ul>

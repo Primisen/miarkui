@@ -1,5 +1,6 @@
 import {useNavigate} from "react-router-dom";
 import React from "react";
+import {Typography} from "@mui/material";
 
 function Logout() {
 
@@ -13,10 +14,12 @@ function Logout() {
 
     return (
         <button
-            className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"
+            className="px-3 py-2 flex items-center uppercase leading-snug hover:opacity-75"
             onClick={logout}
         >
-            <span className="ml-2">Sign Out</span>
+            <Typography variant='subtitle2'>
+                Sign out
+            </Typography>
         </button>
     )
 }
