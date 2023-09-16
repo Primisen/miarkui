@@ -18,9 +18,8 @@ function LikeButton({reviewId}: LikeButtonProps) {
         } else {
             setLikes(likes + 1);
         }
-
-        await postLike(reviewId);
         setIsClicked(!isClicked);
+        await postLike(reviewId);
     };
 
 
