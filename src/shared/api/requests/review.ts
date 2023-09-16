@@ -8,7 +8,7 @@ import {HttpRequest} from "@aws-sdk/protocol-http";
 import {formatUrl} from "@aws-sdk/util-format-url";
 
 const getAllReviews = async () => {
-    const response = await axios.get(urls.GET_ALL_REVIEWS)
+    const response = await axios.get(urls.REVIEWS)
     for (let i = 0; i < response.data.length; i++) {
         await getImageFromS3(response.data[i])
     }
