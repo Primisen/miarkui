@@ -8,18 +8,26 @@ import {HttpRequest} from "@aws-sdk/protocol-http";
 import {formatUrl} from "@aws-sdk/util-format-url";
 
 const getAllReviews = async () => {
-    const response = await axios.get(urls.REVIEWS)
-    for (let i = 0; i < response.data.length; i++) {
-        await getImageFromS3(response.data[i])
+    const response = await axios.get<IReview[]>(urls.REVIEWS)
+    const reviews = response.data;
+    for (let i = 0; i < reviews.length; i++) {
+        reviews[i].coverImageUrl = await getPresignImageUrlFromS3(reviews[i].coverImageUrl)
     }
+    return reviews
+}
+
+const getReviewById = async (id: number) => {
+    const response = await axios.get<IReview>(urls.REVIEWS + '/' + id)
+    response.data.coverImageUrl = await getPresignImageUrlFromS3(response.data.coverImageUrl)
     return response.data
 }
 
-const getImageFromS3 = async (review: IReview) => {
-    const endpoint = parseUrl(review.coverImageUrl);
+const getPresignImageUrlFromS3 = async (coverImageUrl: string) => {
+    const endpoint = parseUrl(coverImageUrl);
     const presigner = new S3RequestPresigner(createS3RequestConfiguration());
-    const url = await presigner.presign(new HttpRequest(endpoint));
-    review.coverImageUrl = formatUrl(url).toString()
+    const presignHttpRequest = await presigner.presign(new HttpRequest(endpoint));
+    return formatUrl(presignHttpRequest).toString()
+
 }
 
 const createS3RequestConfiguration = () => {
@@ -33,7 +41,7 @@ const createS3RequestConfiguration = () => {
     }
 }
 
-
 export {
-    getAllReviews
+    getAllReviews,
+    getReviewById
 }
