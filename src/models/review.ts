@@ -1,5 +1,7 @@
 import {IComment} from "./comment";
 import {ISubject} from "./subject";
+import {ITag} from "./tag";
+import {ILikes} from "./likes";
 
 export interface IReview {
     id?: number
@@ -7,8 +9,8 @@ export interface IReview {
     text: string
     coverImageUrl: string
     subject: ISubject
-    // tags: string []
-    tags: {name: string}[]
+    tags: ITag[]
     userId: number
-    comments?: [IComment]
+    comments?: IComment[]
+    likes?: ILikes[]
 }

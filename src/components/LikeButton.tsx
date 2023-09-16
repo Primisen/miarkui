@@ -1,26 +1,33 @@
 import React, {useState} from "react";
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import {FavoriteBorder} from "@mui/icons-material";
+import {postLike} from '../shared/api/requests/postLike'
 
-function LikeButton () {
+interface LikeButtonProps {
+    reviewId: number
+}
+
+function LikeButton({reviewId}: LikeButtonProps) {
 
     const [likes, setLikes] = useState(0);
     const [isClicked, setIsClicked] = useState(false);
 
-    const handleClick = () => {
+    const handleClick = async () => {
         if (isClicked) {
             setLikes(likes - 1);
         } else {
             setLikes(likes + 1);
         }
+
+        await postLike(reviewId);
         setIsClicked(!isClicked);
     };
 
+
     return (
-        <button className={ `like-button ${isClicked && 'liked'}` } onClick={ handleClick }>
-            {/*<span className="likes-counter">{ `Like | ${likes}` }</span>*/}
-            <span className="likes-counter"> <FavoriteIcon /> {likes} </span>
-                <FavoriteBorder/>
+        <button className={`like-button ${isClicked && 'liked'}`} onClick={handleClick}>
+            <span className="likes-counter"> <FavoriteIcon/> {likes} </span>
+            <FavoriteBorder/>
         </button>
     );
 }
