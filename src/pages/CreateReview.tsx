@@ -49,7 +49,9 @@ function CreateReview() {
     const [subject, setSubject] = useState('')
     const [rating, setRating] = useState(0)
 
-    async function addReview() {
+    async function addReview(event: React.FormEvent) {
+
+        event.preventDefault();
 
         if (newCategoryName !== '') {
             setCategory(newCategoryName)
