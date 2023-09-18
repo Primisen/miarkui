@@ -1,13 +1,13 @@
-import API from '../api'
+import {deleteReviewById} from "../shared/api/requests/review";
 
 interface DeleteReviewProps {
-    reviewId: number
+    id: number
 }
 
-function DeleteReview({reviewId}: DeleteReviewProps) {
+function DeleteReview({id}: DeleteReviewProps) {
 
     async function deleteReview() {
-        await API.delete('/reviews/' + reviewId)
+        await deleteReviewById(id)
     }
 
     return (

@@ -28,6 +28,11 @@ const createReview = async (review: IReview) => {
     return response
 }
 
+const deleteReviewById = async (id: number) => {
+    const response = await axios.delete(urls.REVIEWS, id)
+    return response.data
+}
+
 const saveCoverImage = async (coverImage: File | undefined) => {
 
     const client = new S3Client (createS3RequestConfiguration())
@@ -76,5 +81,6 @@ export {
     getAllReviews,
     getReviewById,
     createReview,
-    saveCoverImage
+    saveCoverImage,
+    deleteReviewById
 }

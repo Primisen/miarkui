@@ -34,7 +34,7 @@ function Account() {
             {reviews.map((review) => (
                 <div>
                     <PreviewReview review={review} key={review.id}/>
-                    <DeleteReview reviewId={review.id!} key={review.title}/>
+                    <DeleteReview id={review.id!} key={review.title}/>
                 </div>))
             }
         </div>
