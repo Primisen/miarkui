@@ -73,7 +73,8 @@ function CreateReview() {
             userId: localStorage.userId
         }
 
-        await createReview(review);
+        const response = await createReview(review);
+        console.log(response)
     }
 
     async function handleTagKeyDown(event: React.KeyboardEvent) {

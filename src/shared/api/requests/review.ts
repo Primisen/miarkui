@@ -25,7 +25,7 @@ const getReviewById = async (id: number) => {
 
 const createReview = async (review: IReview) => {
     const response = await axios.post(urls.REVIEWS, review)
-    return response.data
+    return response
 }
 
 const saveCoverImage = async (coverImage: File | undefined) => {
