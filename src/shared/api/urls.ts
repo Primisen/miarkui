@@ -4,6 +4,7 @@ const urls = {
     SEARCH: BASE_URL + '/search',
     REVIEWS: BASE_URL + '/reviews',
     LIKES: BASE_URL + '/likes',
+    REGISTRATION: BASE_URL + '/registration',
 }
 
 export default urls

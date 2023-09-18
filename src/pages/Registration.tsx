@@ -3,6 +3,7 @@ import axios from "axios";
 import {IUser} from "../models/user";
 import ErrorMessage from "../components/ErrorMessage";
 import {Link, useNavigate} from "react-router-dom";
+import registration from "../shared/api/requests/registration";
 
 function Registration() {
 
@@ -28,10 +29,11 @@ function Registration() {
             password
         }
 
-        const response = await axios.post<IUser>('http://localhost:4001/registration', user)
+        // const response = await axios.post<IUser>('http://localhost:4001/registration', user)
+        const data = await registration(user)
 
-        if (typeof response.data === 'string') {
-            setError(response.data)
+        if (typeof data === 'string') {
+            setError(data)
         } else {
 
             navigate('/login');

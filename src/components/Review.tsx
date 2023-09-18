@@ -6,10 +6,11 @@ import LikeButton from "./LikeButton";
 import Typography from "@mui/material/Typography";
 import Tag from "./Tag";
 import {getReviewById} from "../shared/api/requests/review";
+import {Box, Container} from "@mui/material";
 
 function Review() {
 
-    //add user info, modify comment, and rating
+    //add user info, rating, subject
 
     const {id} = useParams();
     const [review, setReview] = useState<IReview>()
@@ -22,12 +23,18 @@ function Review() {
         fetchReview()
             .then((data) => {
                 setReview(data)
+                console.log(review)
             })
     }, []);
 
     return (
-        <div className="container mx-auto items-center ">
 
+        <Box
+        mt={8}
+        mb={12}
+        >
+        <Container>
+            <Typography variant='caption'>{review?.user?.username}</Typography>
             <Typography variant='button'>{review?.subject.category.name}</Typography>
             <Typography variant='h2'>{review?.subject.name}: review</Typography>
             <Typography variant='h5'>{review?.title}</Typography>
@@ -44,7 +51,8 @@ function Review() {
 
             <LikeButton review={review!} key={review?.id}/>
             <CommentTree comments={review?.comments!}/>
-        </div>
+        </Container>
+        </Box>
     )
 }
 
