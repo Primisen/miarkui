@@ -18,5 +18,12 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+    - name: create env file
+      run: |
+        touch .env       
+        echo REACT_APP_S3_BUCKET_NAME=${{ secrets.REACT_APP_S3_BUCKET_NAME }}  >> .env
+        echo REACT_APP_S3_BUCKET_REGION=${{ secrets.REACT_APP_S3_BUCKET_REGION }} >> .env
+        echo REACT_APP_AWS_ACCESS_KEY_ID=${{ secrets.REACT_APP_AWS_ACCESS_KEY_ID }} >> .env
+        echo REACT_APP_AWS_SECRET_ACCESS_KEY=${{ secrets.REACT_APP_AWS_SECRET_ACCESS_KEY }} >> .env
     - run: npm ci
-    - run: pm2 restart front
+    - run: /home/ubuntu/.nvm/versions/node/v16.16.0/bin/pm2 restart front
