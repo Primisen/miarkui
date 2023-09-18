@@ -47,7 +47,7 @@ function CreateReview() {
     const [newCategoryName, setNewCategoryName] = useState('')
     const [newSubjectName, setNewSubjectName] = useState('')
     const [category, setCategory] = useState('')
-    const [subject, setSubject] = useState('')
+    const [subjectName, setSubjectName] = useState('')
     const [rating, setRating] = useState(0)
 
     const navigate = useNavigate();
@@ -60,7 +60,9 @@ function CreateReview() {
             setCategory(newCategoryName)
         }
         if (newSubjectName !== '') {
-            setSubject(newSubjectName)
+            // setSubjectName(newSubjectName)
+            const withoutItVariableSetNotWorking = newSubjectName
+            setSubjectName(withoutItVariableSetNotWorking)
         }
 
         const review: IReview = {
@@ -68,7 +70,7 @@ function CreateReview() {
             text: text,
             coverImageUrl: await saveCoverImage(coverImage),
             subject: {
-                name: subject,
+                name: subjectName,
                 rating: rating,
                 category: {
                     name: category
@@ -170,8 +172,8 @@ function CreateReview() {
                                 sx={{minWidth: 200}}
                                 labelId="demo-simple-select-standard-label"
                                 id="demo-simple-select-standard"
-                                value={subject}
-                                onChange={event => setSubject(event.target.value)}
+                                value={subjectName}
+                                onChange={event => setSubjectName(event.target.value)}
                                 label="Select a subject"
                             >
                                 {subjects.map((subject) => (
