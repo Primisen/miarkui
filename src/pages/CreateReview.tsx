@@ -46,7 +46,7 @@ function CreateReview() {
     const [subjects, setSubjects] = useState<ISubject[]>([])
     const [newCategoryName, setNewCategoryName] = useState('')
     const [newSubjectName, setNewSubjectName] = useState('')
-    const [category, setCategory] = useState('')
+    const [categoryName, setCategoryName] = useState('')
     const [subjectName, setSubjectName] = useState('')
     const [rating, setRating] = useState(0)
 
@@ -56,13 +56,14 @@ function CreateReview() {
 
         event.preventDefault();
 
+        let resultSubjectName = subjectName;
+        let resultCategoryName = categoryName;
+
         if (newCategoryName !== '') {
-            setCategory(newCategoryName)
+            resultCategoryName = newCategoryName
         }
         if (newSubjectName !== '') {
-            // setSubjectName(newSubjectName)
-            const withoutItVariableSetNotWorking = newSubjectName
-            setSubjectName(withoutItVariableSetNotWorking)
+            resultSubjectName = newSubjectName
         }
 
         const review: IReview = {
@@ -70,10 +71,10 @@ function CreateReview() {
             text: text,
             coverImageUrl: await saveCoverImage(coverImage),
             subject: {
-                name: subjectName,
+                name: resultSubjectName,
                 rating: rating,
                 category: {
-                    name: category
+                    name: resultCategoryName
                 }
             },
             tags: tags,
@@ -140,8 +141,8 @@ function CreateReview() {
                                 sx={{minWidth: 200}}
                                 labelId="demo-simple-select-standard-label"
                                 id="demo-simple-select-standard"
-                                value={category}
-                                onChange={event => setCategory(event.target.value)}
+                                value={categoryName}
+                                onChange={event => setCategoryName(event.target.value)}
                                 label="Select review category"
                             >
                                 {categories.map((category) => (
