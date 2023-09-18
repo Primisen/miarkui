@@ -49,9 +49,7 @@ function CreateReview() {
     const [subject, setSubject] = useState('')
     const [rating, setRating] = useState(0)
 
-    async function addReview(event: React.FormEvent) {
-
-        event.preventDefault();
+    async function addReview() {
 
         if (newCategoryName !== '') {
             setCategory(newCategoryName)
@@ -74,9 +72,7 @@ function CreateReview() {
             tags: tags,
             userId: localStorage.userId
         }
-
-        const response = await createReview(review);
-        console.log(response)
+        await createReview(review);
     }
 
     async function handleTagKeyDown(event: React.KeyboardEvent) {
@@ -150,6 +146,7 @@ function CreateReview() {
                             id="filled-required"
                             label="Or create a new category"
                             variant="standard"
+                            value={newCategoryName}
                             onChange={event => setNewCategoryName(event.target.value)}
                         />
                     </Box>
@@ -181,6 +178,7 @@ function CreateReview() {
                             id="filled-required"
                             label="Or create a new subject"
                             variant="standard"
+                            value={newSubjectName}
                             onChange={event => setNewSubjectName(event.target.value)}
                         />
                     </Box>
