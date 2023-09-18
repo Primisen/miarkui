@@ -1,13 +1,26 @@
-import React, {FormEvent, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import MarkdownEditor from "@uiw/react-markdown-editor";
-import {PutObjectCommand, S3Client} from "@aws-sdk/client-s3";
-import API from '../api'
 import {ICategory} from "../models/category";
 import {ISubject} from "../models/subject";
 import {IReview} from "../models/review";
 import Typography from "@mui/material/Typography";
-import {Autocomplete, Button, Chip, Rating, TextField} from "@mui/material";
+import {
+    Autocomplete,
+    Box,
+    Button,
+    Chip,
+    Container,
+    InputLabel,
+    MenuItem,
+    Rating,
+    Select,
+    TextField
+} from "@mui/material";
 import {ITag} from "../models/tag";
+import {FileUploader} from "react-drag-drop-files";
+import getAllCategories from "../shared/api/requests/category";
+import getAllSubjects from "../shared/api/requests/subject";
+import {createReview, saveCoverImage} from "../shared/api/requests/review";
 
 function CreateReview() {
 
@@ -26,7 +39,7 @@ function CreateReview() {
         '<a href="https://www.markdownguide.org/basic-syntax/">here</a>')
 
     const [coverImage, setCoverImage] = useState<File>()
-    const [coverImageUrl, setCoverImageUrl] = useState('')
+    const [tag, setTag] = useState('')
     const [tags, setTags] = useState<ITag []>([])
     const [categories, setCategories] = useState<ICategory[]>([])
     const [subjects, setSubjects] = useState<ISubject[]>([])
@@ -36,66 +49,7 @@ function CreateReview() {
     const [subject, setSubject] = useState('')
     const [rating, setRating] = useState(0)
 
-    function removeTag(index: number) {
-        setTags(tags.filter((element, i) => i !== index))
-    }
-
-    function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-        if (event.target.value.includes(" ")) {
-            // setTags([...tags, name: event.target.value])
-            setTags( [
-                ...tags,
-                {name: event.target.value}
-            ])
-
-            // console.log(tags.length)
-            event.target.value = ''
-        }
-    }
-
-    const s3BaseUrl =
-        "https://" +
-        process.env.REACT_APP_S3_BUCKET_NAME +
-        ".s3." +
-        process.env.REACT_APP_S3_BUCKET_REGION +
-        ".amazonaws.com/"
-
-    async function handleUploadImage() {
-        const client = createS3Client()
-        console.log(coverImage?.name)
-        const putCommand = createPutCommand(coverImage)
-        await client.send(putCommand);
-
-        setCoverImageUrl(s3BaseUrl + coverImage?.name)
-
-        console.log("name: " + coverImage?.name)
-        console.log("coverImage: " + coverImageUrl);
-
-    }
-
-    function createS3Client() {
-        return new S3Client({
-            region: process.env.REACT_APP_S3_BUCKET_REGION,
-            credentials: {
-                accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
-                secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACCESS_KEY
-            }
-        });
-    }
-
-    function createPutCommand(file?: File) {
-        return new PutObjectCommand({
-            Bucket: process.env.REACT_APP_S3_BUCKET_NAME,
-            Key: file?.name,
-            Body: file
-        })
-    }
-
-    async function addReview(event: FormEvent) {
-
-        event.preventDefault()
-
-        await handleUploadImage()
+    async function addReview() {
 
         if (newCategoryName !== '') {
             setCategory(newCategoryName)
@@ -107,7 +61,7 @@ function CreateReview() {
         const review: IReview = {
             title: title,
             text: text,
-            coverImageUrl: s3BaseUrl + coverImage?.name,
+            coverImageUrl: await saveCoverImage(coverImage),
             subject: {
                 name: subject,
                 rating: rating,
@@ -119,295 +73,194 @@ function CreateReview() {
             userId: localStorage.userId
         }
 
-        await API.post('/reviews', review)
+        await createReview(review);
+    }
+
+    async function handleTagKeyDown(event: React.KeyboardEvent) {
+        if (event.key === 'Enter') {
+            setTags([
+                ...tags,
+                {name: tag}
+            ])
+        }
+    }
+
+    async function handleTagChange(event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) {
+        setTag(event.target.value)
     }
 
     async function fetchCategory() {
-        const response = await API.get('/categories')
-        setCategories(response.data);
+        return await getAllCategories
     }
 
     async function fetchSubject() {
-        const response = await API.get('/subjects')
-        setSubjects(response.data);
+        return await getAllSubjects
     }
 
     useEffect(() => {
-        fetchCategory();
+
+        fetchCategory()
+            .then((data) => {
+                setCategories(data)
+            });
+
         fetchSubject()
+            .then((data) => {
+                setSubjects(data)
+            });
+
     }, [])
 
     return (
-        <form onSubmit={addReview}>
-            <div className="min-h-screen p-6 bg-gray-100 flex items-center justify-center">
-                <div className="container max-w-screen-lg mx-auto">
-                    <div>
-                        <h2 className="font-semibold text-xl text-gray-600 mb-6">Create new review</h2>
-                        <div className="bg-white rounded shadow-lg p-4 px-4 md:p-8 mb-6">
+        <Box
+            mt={8}
+            mb={12}
+        >
+            <Container>
+                <form onSubmit={addReview}>
 
+                    {/*Category*/}
+                    <Box
+                        mb={6}
+                        mt={6}
+                    >
+                        <Box>
+                            <InputLabel id="demo-simple-select-standard-label">Select review category</InputLabel>
+                            <Select
 
-                            {/*Category*/}
-
-                            <Autocomplete
-                                disablePortal
-                                id="combo-box-demo"
-                                options={categories}
-                                sx={{ width: 300 }}
-                                renderInput={(params) => <TextField {...params} label="Movie" />}
-                            />
-
-
-
-
-                            <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
-                                <div className="text-gray-600">
-                                    <p className="font-medium text-lg">Category</p>
-                                </div>
-                                <div className="lg:col-span-2">
-                                    <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-5">
-
-                                        <div className="md:col-span-2">
-                                            <label htmlFor="category">
-                                                Select a category:
-                                            </label>
-                                            <select
-                                                name="category"
-                                                className="h-10 border mt-1 rounded px-4 w-full bg-gray-50 mb-2"
-                                                onChange={event => setCategory(event.target.value)}
-                                            >
-                                                {categories.map((category) => (
-                                                    <option value={category.name}>{category.name}</option>
-                                                ))}
-                                            </select>
-                                            <label
-                                                className="text-gray-500"
-                                                htmlFor="category">
-                                                Or create a new category:
-                                            </label>
-                                            <input
-                                                name="title"
-                                                className="h-10 border mt-1 rounded px-4 w-full bg-gray-50 mb-2"
-                                                type="text"
-                                                placeholder='New category'
-                                                value={newCategoryName}
-                                                onChange={event => setNewCategoryName(event.target.value)}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            {/*Subject*/}
-                            <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
-                                <div className="text-gray-600">
-                                    <p className="font-medium text-lg">Subject</p>
-                                </div>
-                                <div className="lg:col-span-2">
-                                    <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-5">
-                                        <div className="md:col-span-2">
-                                            <label htmlFor="subject">
-                                                Select a subject:
-                                            </label>
-                                            <select
-                                                name="subject"
-                                                className="h-10 border mt-1 rounded px-4 w-full bg-gray-50 mb-2"
-                                                onChange={event => setSubject(event.target.value)}
-                                            >
-                                                {subjects.map((subject) => (
-                                                    <option value={subject.name}>{subject.name}</option>
-                                                ))}
-                                            </select>
-                                            <label
-                                                className="text-gray-500"
-                                                htmlFor="newSubject">
-                                                Or create a new subject:
-                                            </label>
-                                            <input
-                                                name="newSubject"
-                                                className="h-10 border mt-1 rounded px-4 w-full bg-gray-50 mb-2"
-                                                type="text"
-                                                placeholder='New subject'
-                                                value={newSubjectName}
-                                                onChange={event => setNewSubjectName(event.target.value)}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            {/*Title*/}
-                            <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
-                                <div className="text-gray-600">
-                                    <p className="font-medium text-lg">Title</p>
-                                </div>
-                                <div className="lg:col-span-2">
-                                    <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-5">
-                                        <div className="md:col-span-5">
-                                            <label htmlFor="title">
-                                                Title
-                                            </label>
-                                            <input
-                                                name="title"
-                                                className="h-10 border mt-1 rounded px-4 w-full bg-gray-50 mb-2"
-                                                type="text"
-                                                value={title}
-                                                onChange={event => setTitle(event.target.value)}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            {/*Image*/}
-
-                            <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
-                                <div className="text-gray-600">
-                                    <p className="font-medium text-lg">Cover image</p>
-                                </div>
-                                <div className="lg:col-span-2">
-                                    <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-5">
-                                        <div className="md:col-span-5">
-                                            <div className="max-w-2xl mx-auto">
-
-                                                <div className="flex items-center justify-center w-full">
-                                                    <label htmlFor="dropzone-file"
-                                                           className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
-                                                        <div
-                                                            className="flex flex-col items-center justify-center pt-5 pb-6">
-                                                            <svg className="w-10 h-10 mb-3 text-gray-400"
-                                                                 fill="none" stroke="currentColor"
-                                                                 viewBox="0 0 24 24"
-                                                                 xmlns="http://www.w3.org/2000/svg">
-                                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                                      stroke-width="2"
-                                                                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                                                            </svg>
-                                                            <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                                                                    <span
-                                                                        className="font-semibold">Click to upload</span> or
-                                                                drag and drop</p>
-                                                            <p className="text-xs text-gray-500 dark:text-gray-400">SVG,
-                                                                PNG, JPG or GIF (MAX. 800x400px)</p>
-                                                        </div>
-                                                        <input
-                                                            id="dropzone-file"
-                                                            type="file"
-                                                            // className="hidden"
-                                                            // @ts-ignore
-                                                            onChange={event => setCoverImage(event.target.files[0])}
-                                                        />
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/*<div className="relative w-full mb-3">*/}
-                                {/*    <input*/}
-                                {/*        type="file"*/}
-                                {/*        // @ts-ignore*/}
-                                {/*        onChange={event => (setCoverImage(event.target.files[0]))}*/}
-                                {/*    />*/}
-                                {/*</div>*/}
-
-                                {/*<p className="mt-5">This file input component is part of a larger, open-source library of Tailwind CSS components. Learn*/}
-                                {/*    more*/}
-                                {/*    by going to the official <a className="text-blue-600 hover:underline"*/}
-                                {/*                                href="#" target="_blank">Flowbite Documentation</a>.*/}
-                                {/*</p>*/}
-                                {/*<script src="https://unpkg.com/flowbite@1.4.0/dist/flowbite.js"></script>*/}
-                            </div>
-
-
-                            {/*Tags*/}
-
-
-
-                            <Autocomplete
-                                multiple
-                                id="tags-filled"
-                                options={tags.map((tag) => tag.name)}
-                                defaultValue={[tags[13].name]}
-                                freeSolo
-                                renderTags={(value: readonly string[], getTagProps) =>
-                                    value.map((option: string, index: number) => (
-                                        <Chip variant="outlined" label={option} {...getTagProps({ index })} />
-                                    ))
-                                }
-                                renderInput={(params) => (
-                                    <TextField
-                                        {...params}
-                                        variant="filled"
-                                        label="freeSolo"
-                                        placeholder="Favorites"
-                                    />
-                                )}
-                            />
-
-
-
-                            <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
-                                <div className="text-gray-600">
-                                    <p className="font-medium text-lg">Tags</p>
-                                    <p>Enter tags separated by spaces.</p>
-                                </div>
-                                <div className="lg:col-span-2">
-                                    <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-5">
-                                        <div className="md:col-span-5">
-                                            <div className="flex flex-wrap border-2 gap-0.5 mt-2 h-10">
-                                                {tags.map((tag, index) => (
-                                                    <div
-                                                        className="bg-gray-300 pl-0.5 pr-1"
-                                                        key={index}>
-                                                        <span>{tag.name}</span>
-                                                        <span className="cursor-pointer"
-                                                              onClick={() => removeTag(index)}>&times;</span>
-                                                    </div>
-                                                ))}
-
-                                                <input onChange={event => handleChange(event)}
-                                                       className="flex-grow"
-                                                       type="text"
-                                                       placeholder="tags"/>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            {/*Text*/}
-                            <MarkdownEditor
-                                value={text}
-                                height="600px"
-                                visible={true}
-                                className="mt-20"
-                                onChange={(value, viewUpdate) => setText(value)}
-                            />
-
-                            <Typography component="legend">Your rating:</Typography>
-                            <Rating
-                                name="customized-10"
-                                defaultValue={5}
-                                max={10}
-                                onChange={(element, rating) => setRating(rating!)}/>
-
-                            <Button
-                                variant="outlined"
-                                type="submit"
+                                sx={{minWidth: 200}}
+                                labelId="demo-simple-select-standard-label"
+                                id="demo-simple-select-standard"
+                                value={category}
+                                onChange={event => setCategory(event.target.value)}
+                                label="Select review category"
                             >
-                                Add new review
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                                {categories.map((category) => (
+                                    <MenuItem value={category.name}>{category.name}</MenuItem>
+                                ))}
+                            </Select>
+                        </Box>
 
-        </form>
+                        <TextField
+                            sx={{minWidth: 200}}
+                            size="small"
+                            id="filled-required"
+                            label="Or create a new category"
+                            variant="standard"
+                            onChange={event => setNewCategoryName(event.target.value)}
+                        />
+                    </Box>
+
+                    {/*Subject*/}
+                    <Box
+                        mb={6}
+                        mt={6}
+                    >
+                        <Box>
+                            <InputLabel id="demo-simple-select-standard-label">Select a subject</InputLabel>
+                            <Select
+                                sx={{minWidth: 200}}
+                                labelId="demo-simple-select-standard-label"
+                                id="demo-simple-select-standard"
+                                value={subject}
+                                onChange={event => setSubject(event.target.value)}
+                                label="Select a subject"
+                            >
+                                {subjects.map((subject) => (
+                                    <MenuItem value={subject.name}>{subject.name}</MenuItem>
+                                ))}
+                            </Select>
+                        </Box>
+
+                        <TextField
+                            sx={{minWidth: 200}}
+                            size="small"
+                            id="filled-required"
+                            label="Or create a new subject"
+                            variant="standard"
+                            onChange={event => setNewSubjectName(event.target.value)}
+                        />
+                    </Box>
+
+                    {/*Title*/}
+                    <Box
+                        mt={6}
+                        mb={6}
+                    >
+                        <TextField
+                            required
+                            id="filled-required"
+                            label="Title"
+                            variant="standard"
+                            onChange={event => setTitle(event.target.value)}
+                        />
+                    </Box>
+
+                    {/*Image*/}
+                    <FileUploader handleChange={(file: React.SetStateAction<File | undefined>) => {
+                        setCoverImage(file)
+                    }} name="file"/>
+
+                    {/*Tags*/}
+                    <Box
+                        mt={6}
+                    >
+                        <Autocomplete
+                            multiple
+                            id="tags-filled"
+                            options={tags.map((tag) => tag.name)}
+                            freeSolo
+                            renderTags={(value: readonly string[], getTagProps) =>
+                                value.map((option: string, index: number) => (
+                                    <Chip variant="outlined" label={option} {...getTagProps({index})} />
+                                ))
+                            }
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    variant="standard"
+                                    label="Enter your tags"
+                                    placeholder="Tags"
+                                    value={tag}
+                                    onChange={event => handleTagChange(event)}
+                                    onKeyDown={event => handleTagKeyDown(event)}
+                                />
+                            )}
+                        />
+                    </Box>
+
+                    {/*Text*/}
+                    <MarkdownEditor
+                        value={text}
+                        height="600px"
+                        visible={true}
+                        className="mt-20 mb-20"
+                        onChange={(value, viewUpdate) => setText(value)}
+                    />
+
+                    {/*Rating*/}
+                    <Box
+                        mb={4}
+                    >
+                        <Typography component="legend">Your rating:</Typography>
+                        <Rating
+                            name="customized-10"
+                            defaultValue={5}
+                            max={10}
+                            onChange={(element, rating) => setRating(rating!)}
+                        />
+                    </Box>
+
+                    {/*Submit*/}
+                    <Button
+                        variant="outlined"
+                        type="submit"
+                    >
+                        Add new review
+                    </Button>
+                </form>
+            </Container>
+        </Box>
     )
 }
 

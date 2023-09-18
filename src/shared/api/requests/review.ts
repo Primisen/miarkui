@@ -6,6 +6,7 @@ import {S3RequestPresigner} from "@aws-sdk/s3-request-presigner";
 import {Hash} from "@smithy/hash-node";
 import {HttpRequest} from "@aws-sdk/protocol-http";
 import {formatUrl} from "@aws-sdk/util-format-url";
+import {PutObjectCommand, S3Client} from "@aws-sdk/client-s3";
 
 const getAllReviews = async () => {
     const response = await axios.get<IReview[]>(urls.REVIEWS)
@@ -20,6 +21,29 @@ const getReviewById = async (id: number) => {
     const response = await axios.get<IReview>(urls.REVIEWS + '/' + id)
     response.data.coverImageUrl = await getPresignImageUrlFromS3(response.data.coverImageUrl)
     return response.data
+}
+
+const createReview = async (review: IReview) => {
+    const response = await axios.post(urls.REVIEWS, review)
+    return response.data
+}
+
+const saveCoverImage = async (coverImage: File | undefined) => {
+
+    const client = new S3Client (createS3RequestConfiguration())
+    const putCommand = createPutCommand(coverImage)
+    await client.send(putCommand);
+
+    return  s3BaseUrl + coverImage?.name
+}
+
+
+const createPutCommand = (file?: File) => {
+    return new PutObjectCommand({
+        Bucket: process.env.REACT_APP_S3_BUCKET_NAME,
+        Key: file?.name,
+        Body: file
+    })
 }
 
 const getPresignImageUrlFromS3 = async (coverImageUrl: string) => {
@@ -41,7 +65,16 @@ const createS3RequestConfiguration = () => {
     }
 }
 
+const s3BaseUrl =
+    "https://" +
+    process.env.REACT_APP_S3_BUCKET_NAME +
+    ".s3." +
+    process.env.REACT_APP_S3_BUCKET_REGION +
+    ".amazonaws.com/"
+
 export {
     getAllReviews,
-    getReviewById
+    getReviewById,
+    createReview,
+    saveCoverImage
 }
