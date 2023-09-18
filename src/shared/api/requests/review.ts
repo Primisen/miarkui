@@ -24,22 +24,21 @@ const getReviewById = async (id: number) => {
 }
 
 const createReview = async (review: IReview) => {
-    const response = await axios.post(urls.REVIEWS, review)
-    return response
+    return await axios.post(urls.REVIEWS, review)
 }
 
 const deleteReviewById = async (id: number) => {
-    const response = await axios.delete(urls.REVIEWS, id)
+    const response = await axios.delete(urls.REVIEWS + '/' + id)
     return response.data
 }
 
 const saveCoverImage = async (coverImage: File | undefined) => {
 
-    const client = new S3Client (createS3RequestConfiguration())
+    const client = new S3Client(createS3RequestConfiguration())
     const putCommand = createPutCommand(coverImage)
     await client.send(putCommand);
 
-    return  s3BaseUrl + coverImage?.name
+    return s3BaseUrl + coverImage?.name
 }
 
 
