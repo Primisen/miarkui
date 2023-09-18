@@ -5,6 +5,7 @@ const urls = {
     REVIEWS: BASE_URL + '/reviews',
     LIKES: BASE_URL + '/likes',
     REGISTRATION: BASE_URL + '/registration',
+    LOGIN: BASE_URL + '/login',
 }
 
 export default urls

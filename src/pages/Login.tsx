@@ -1,8 +1,8 @@
 import React, {useState} from "react";
-import axios from "axios";
 import {IUser} from "../models/user";
 import ErrorMessage from "../components/ErrorMessage";
 import {Link, useNavigate} from "react-router-dom";
+import {login} from "../shared/api/requests/login";
 
 function Login() {
 
@@ -12,8 +12,7 @@ function Login() {
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
 
-
-    async function login(event: React.FormEvent) {
+    async function onLoginSubmit(event: React.FormEvent) {
         setError('');
         event.preventDefault();
 
@@ -26,15 +25,14 @@ function Login() {
             email,
             password
         }
-        const response = await axios.post('http://localhost:4001/login', user)
 
-        console.log(response.data)
+        const data = await login(user);
 
-        if (response.data === 'Email or password is incorrect.') {
-            setError(response.data)
+        if (data === 'Email or password is incorrect.') {
+            setError(data)
         } else {
-            localStorage.setItem('token', response.data.token);
-            localStorage.setItem('userId', response.data.userId);
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('userId', data.userId);
             navigate('/');
             window.location.reload();
         }
@@ -85,7 +83,7 @@ function Login() {
                                 <div className="text-gray-500 text-center mb-3 font-bold">
                                     <small>Or sign in with credentials</small>
                                 </div>
-                                <form onSubmit={login}>
+                                <form onSubmit={onLoginSubmit}>
                                     <div className="relative w-full mb-3">
                                         <label
                                             className="block uppercase text-gray-700 text-xs font-bold mb-2"
