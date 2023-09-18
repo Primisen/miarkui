@@ -21,6 +21,7 @@ import {FileUploader} from "react-drag-drop-files";
 import getAllCategories from "../shared/api/requests/category";
 import getAllSubjects from "../shared/api/requests/subject";
 import {createReview, saveCoverImage} from "../shared/api/requests/review";
+import {useNavigate} from "react-router-dom";
 
 function CreateReview() {
 
@@ -49,7 +50,11 @@ function CreateReview() {
     const [subject, setSubject] = useState('')
     const [rating, setRating] = useState(0)
 
-    async function addReview() {
+    const navigate = useNavigate();
+
+    async function addReview(event: React.FormEvent) {
+
+        event.preventDefault();
 
         if (newCategoryName !== '') {
             setCategory(newCategoryName)
@@ -73,6 +78,9 @@ function CreateReview() {
             userId: localStorage.userId
         }
         await createReview(review);
+
+        navigate('/account');
+        window.location.reload();
     }
 
     async function handleTagKeyDown(event: React.KeyboardEvent) {
