@@ -2,7 +2,7 @@ import {AppBar, Box, Container, Toolbar, Typography} from "@mui/material";
 import React from "react";
 import {Link} from "react-router-dom";
 import Logout from "./Logout";
-import Search from "./Search";
+import Search from "./search/Search";
 import LightbulbIcon from '@mui/icons-material/Lightbulb';
 import ToggleTheme from "./ToggleTheme";
 import LanguageChooser from "./LanguageChooser";

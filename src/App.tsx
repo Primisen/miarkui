@@ -10,6 +10,7 @@ import Logout from "./components/Logout";
 import Account from "./components/Account";
 import Review from "./components/review/Review";
 import {createTheme, CssBaseline, ThemeProvider} from "@mui/material";
+import ShowingFoundObjects from "./components/search/ShovingFindedObjects";
 
 export const ColorModeContext = createContext({
     toggleColorMode: () => {
@@ -52,6 +53,7 @@ function App() {
                         <Route path='/account' element={<Account/>}></Route>
                         <Route path='/reviews' element={<CreateReview/>}></Route>
                         <Route path='/reviews/:id' element={<Review/>}></Route>
+                        <Route path='/found' element={<ShowingFoundObjects />}></Route>
                     </Routes>
                 </ThemeProvider>
             </ColorModeContext.Provider>
