@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {PreviewReview} from "../components/PreviewReview";
+import {PreviewReview} from "./review/PreviewReview";
 import {IReview} from "../models/review";
 import {getAllReviews} from "../shared/api/requests/review";
 

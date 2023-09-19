@@ -1,4 +1,4 @@
-import {IComment} from "../models/comment";
+import {IComment} from "../../models/comment";
 import {ListItemText} from "@mui/material";
 import React from "react";
 

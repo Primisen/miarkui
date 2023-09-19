@@ -2,13 +2,13 @@ import React from 'react';
 import {createContext} from 'react';
 import Navbar from "./components/Navbar";
 import {Route, Routes} from "react-router-dom";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Registration from "./pages/Registration";
-import CreateReview from "./pages/CreateReview";
+import Home from "./components/Home";
+import Login from "./components/Login";
+import Registration from "./components/Registration";
+import CreateReview from "./components/review/CreateReview";
 import Logout from "./components/Logout";
-import Account from "./pages/Account";
-import Review from "./components/Review";
+import Account from "./components/Account";
+import Review from "./components/review/Review";
 import {createTheme, CssBaseline, ThemeProvider} from "@mui/material";
 
 export const ColorModeContext = createContext({

@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from "react";
 import MarkdownEditor from "@uiw/react-markdown-editor";
-import {ICategory} from "../models/category";
-import {ISubject} from "../models/subject";
-import {IReview} from "../models/review";
+import {ICategory} from "../../models/category";
+import {ISubject} from "../../models/subject";
+import {IReview} from "../../models/review";
 import Typography from "@mui/material/Typography";
 import {
     Autocomplete,
@@ -16,11 +16,11 @@ import {
     Select,
     TextField
 } from "@mui/material";
-import {ITag} from "../models/tag";
+import {ITag} from "../../models/tag";
 import {FileUploader} from "react-drag-drop-files";
-import getAllCategories from "../shared/api/requests/category";
-import getAllSubjects from "../shared/api/requests/subject";
-import {createReview, saveCoverImage} from "../shared/api/requests/review";
+import getAllCategories from "../../shared/api/requests/category";
+import getAllSubjects from "../../shared/api/requests/subject";
+import {createReview, saveCoverImage} from "../../shared/api/requests/review";
 import {useNavigate} from "react-router-dom";
 
 function CreateReview() {

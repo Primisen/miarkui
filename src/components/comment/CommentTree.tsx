@@ -1,6 +1,6 @@
 import CreateComment from "./CreateComment";
 import Comment from "./Comment";
-import {IComment} from "../models/comment";
+import {IComment} from "../../models/comment";
 import {Grid, List, ListItem} from "@mui/material";
 import Typography from "@mui/material/Typography";
 import React from "react";

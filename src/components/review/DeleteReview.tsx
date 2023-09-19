@@ -1,4 +1,4 @@
-import {deleteReviewById} from "../shared/api/requests/review";
+import {deleteReviewById} from "../../shared/api/requests/review";
 
 interface DeleteReviewProps {
     id: number

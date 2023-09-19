@@ -1,8 +1,8 @@
 import {Link} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import {IReview} from "../models/review";
-import {PreviewReview} from "../components/PreviewReview";
-import DeleteReview from "../components/DeleteReview";
+import {PreviewReview} from "./review/PreviewReview";
+import DeleteReview from "./review/DeleteReview";
 import {getAllReviews} from "../shared/api/requests/review";
 
 function Account() {

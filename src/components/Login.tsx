@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {IUser} from "../models/user";
-import ErrorMessage from "../components/ErrorMessage";
+import ErrorMessage from "./ErrorMessage";
 import {Link, useNavigate} from "react-router-dom";
 import {login} from "../shared/api/requests/login";
 

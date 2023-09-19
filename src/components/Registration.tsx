@@ -1,7 +1,6 @@
 import React, {useState} from "react";
-import axios from "axios";
 import {IUser} from "../models/user";
-import ErrorMessage from "../components/ErrorMessage";
+import ErrorMessage from "./ErrorMessage";
 import {Link, useNavigate} from "react-router-dom";
 import registration from "../shared/api/requests/registration";
 
@@ -29,7 +28,6 @@ function Registration() {
             password
         }
 
-        // const response = await axios.post<IUser>('http://localhost:4001/registration', user)
         const data = await registration(user)
 
         if (typeof data === 'string') {
@@ -47,13 +45,6 @@ function Registration() {
 
             <section className="absolute w-full h-full">
                 <div
-                    // className="absolute top-0 w-full h-full bg-gray-900"
-                    style={{
-                        // backgroundImage:
-                        //     "url(" + require("assets/img/register_bg_2.png").default + ")",
-                        // backgroundSize: "100%",
-                        // backgroundRepeat: "no-repeat"
-                    }}
                 ></div>
                 <div className="container mx-auto px-4 h-full">
                     <div className="flex content-center items-center justify-center h-full">

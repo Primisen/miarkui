@@ -1,10 +1,10 @@
 import React from 'react';
-import {IReview} from "../models/review";
+import {IReview} from "../../models/review";
 import {Link} from "react-router-dom";
 import Card from '@mui/material/Card';
 import {Box, CardContent, CardMedia, Chip} from "@mui/material";
 import Typography from "@mui/material/Typography";
-import Tag from "./Tag";
+import Tag from "../Tag";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 
 interface ReviewProps {
