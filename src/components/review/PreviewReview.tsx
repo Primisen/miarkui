@@ -13,7 +13,7 @@ interface ReviewProps {
 
 export function PreviewReview({review}: ReviewProps) {
 
-    const PREVIEW_TEXT_LENGTH = 700
+    const PREVIEW_TEXT_LENGTH = 500
 
     return (
         <Box
@@ -60,7 +60,7 @@ export function PreviewReview({review}: ReviewProps) {
                 >
                     <CardContent className="space-y-4 px-9 pt-10 pb-14 rounded-b-lg">
                         <Typography className="text-lg font-light">
-                            {review.text.substring(0, PREVIEW_TEXT_LENGTH)}...
+                            {review.text.substring(0, PREVIEW_TEXT_LENGTH).replace(/[&\\#,+~%'"*<>{}]/g, '')}...
                         </Typography>
                         <Box
                             sx={{

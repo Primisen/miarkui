@@ -7,6 +7,7 @@ import Typography from "@mui/material/Typography";
 import Tag from "../Tag";
 import {getReviewById} from "../../shared/api/requests/review";
 import {Box, Container} from "@mui/material";
+import MarkdownEditor from "@uiw/react-markdown-editor";
 
 function Review() {
 
@@ -39,7 +40,9 @@ function Review() {
             <Typography variant='h2'>{review?.subject.name}: review</Typography>
             <Typography variant='h5'>{review?.title}</Typography>
 
-            <img src={review?.coverImageUrl}/>
+            <img src={review?.coverImageUrl} alt={review?.title}/>
+
+            <MarkdownEditor.Markdown source={review?.text}  />
 
             <Typography variant='body1'>
                 {review?.text}

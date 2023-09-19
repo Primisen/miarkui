@@ -11,7 +11,7 @@ interface ReviewProps {
 
 export function SearchPreviewReview({review}: ReviewProps) {
 
-    const PREVIEW_TEXT_LENGTH = 700
+    const PREVIEW_TEXT_LENGTH = 500
 
     return (
         <Box
@@ -34,7 +34,7 @@ export function SearchPreviewReview({review}: ReviewProps) {
                         {review.subject.name}
                     </Typography>
                     <Typography className="text-lg font-light">
-                        {review.text.substring(0, PREVIEW_TEXT_LENGTH)}...
+                        {review.text.substring(0, PREVIEW_TEXT_LENGTH).replace(/[&#+~%'"*<>{}]/g, '')}...
                     </Typography>
                     <Box
                         sx={{
