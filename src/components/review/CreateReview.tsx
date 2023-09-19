@@ -14,7 +14,7 @@ import {
     MenuItem,
     Rating,
     Select,
-    TextField
+    TextField, useTheme
 } from "@mui/material";
 import {ITag} from "../../models/tag";
 import {FileUploader} from "react-drag-drop-files";
@@ -24,6 +24,8 @@ import {createReview, saveCoverImage} from "../../shared/api/requests/review";
 import {useNavigate} from "react-router-dom";
 
 function CreateReview() {
+
+    const theme = useTheme();
 
     const [title, setTitle] = useState('')
     const [text, setText] = useState(
@@ -244,6 +246,7 @@ function CreateReview() {
                     {/*Text*/}
                     <MarkdownEditor
                         value={text}
+                        theme={theme.palette.mode}
                         height="600px"
                         visible={true}
                         className="mt-20 mb-20"

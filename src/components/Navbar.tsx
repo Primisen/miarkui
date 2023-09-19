@@ -1,4 +1,4 @@
-import {AppBar, Box, Container, Toolbar, Typography} from "@mui/material";
+import {AppBar, Box, Container, Toolbar, Typography, useTheme} from "@mui/material";
 import React from "react";
 import {Link} from "react-router-dom";
 import Logout from "./Logout";
@@ -8,6 +8,8 @@ import ToggleTheme from "./ToggleTheme";
 import LanguageChooser from "./LanguageChooser";
 
 function Navbar() {
+
+    useTheme();
 
     return (
         <Box sx={{flexGrow: 1}}>
