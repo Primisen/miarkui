@@ -33,8 +33,12 @@ const deleteReviewById = async (id: number) => {
 }
 
 const getReviewsByUserId = async (userId: number) => {
-    const response = await axios.get(urls.BASE_URL + '/users/' +  userId + '/reviews')
-    return response.data
+    const response = await axios.get(urls.BASE_URL + '/users/' + userId + '/reviews')
+    const reviews = response.data;
+    for (let i = 0; i < reviews.length; i++) {
+        reviews[i].coverImageUrl = await getPresignImageUrlFromS3(reviews[i].coverImageUrl)
+    }
+    return reviews
 }
 
 const saveCoverImage = async (coverImage: File | undefined) => {
