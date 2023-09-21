@@ -1,3 +1,4 @@
+import {Button} from "@mui/material";
 import {deleteReviewById} from "../../shared/api/requests/review";
 
 interface DeleteReviewProps {
@@ -11,7 +12,9 @@ function DeleteReview({id}: DeleteReviewProps) {
     }
 
     return (
-        <button onClick={deleteReview}>Delete</button>
+        <Button onClick={deleteReview} variant="outlined" color="error">
+            Delete
+        </Button>
     )
 }
 

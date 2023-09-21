@@ -4,6 +4,8 @@ import {IReview} from "../models/review";
 import {PreviewReview} from "./review/PreviewReview";
 import DeleteReview from "./review/DeleteReview";
 import {getAllReviews} from "../shared/api/requests/review";
+import {Box, Container} from "@mui/material";
+import Typography from "@mui/material/Typography";
 
 function Account() {
 
@@ -21,23 +23,30 @@ function Account() {
     }, [])
 
     return (
-        <div>
+        <Container>
             <Link
                 className="px-3 py-2 flex items-center text-xs  uppercase font-bold leading-snug  hover:opacity-75"
                 to='/reviews'
             >
-                <span className='ml-2'>
+                <Typography sx={{mt: 6, ml: 6}} variant='subtitle2'>
                     Create review
-                </span>
+                </Typography>
             </Link>
-
-            {reviews.map((review) => (
-                <div>
-                    <PreviewReview review={review} key={review.id}/>
-                    <DeleteReview id={review.id!} key={review.title}/>
-                </div>))
-            }
-        </div>
+            <Box mb={6}
+                 display="flex"
+                 justifyContent="center"
+                 alignItems="center"
+            >
+                {reviews.map((review) => (
+                    <Box>
+                        <PreviewReview review={review} key={review.id}/>
+                        <Box mt={2}>
+                            <DeleteReview id={review.id!} key={review.title}/>
+                        </Box>
+                    </Box>
+                ))}
+            </Box>
+        </Container>
     )
 }
 
