@@ -3,7 +3,7 @@ import React, {useEffect, useState} from "react";
 import {IReview} from "../models/review";
 import {PreviewReview} from "./review/PreviewReview";
 import DeleteReview from "./review/DeleteReview";
-import {getAllReviews} from "../shared/api/requests/review";
+import {getReviewsByUserId} from "../shared/api/requests/review";
 import {Box, Container} from "@mui/material";
 import Typography from "@mui/material/Typography";
 
@@ -13,7 +13,8 @@ function Account() {
 
     useEffect(() => {
         const fetchData = async () => {
-            return await getAllReviews();
+            const userId = Number(localStorage.getItem('userId'));
+            return await getReviewsByUserId(userId);
         }
 
         fetchData()

@@ -32,6 +32,11 @@ const deleteReviewById = async (id: number) => {
     return response.data
 }
 
+const getReviewsByUserId = async (userId: number) => {
+    const response = await axios.get(urls.BASE_URL + '/users/' +  userId + '/reviews')
+    return response.data
+}
+
 const saveCoverImage = async (coverImage: File | undefined) => {
 
     const client = new S3Client(createS3RequestConfiguration())
@@ -81,5 +86,6 @@ export {
     getReviewById,
     createReview,
     saveCoverImage,
-    deleteReviewById
+    deleteReviewById,
+    getReviewsByUserId
 }
