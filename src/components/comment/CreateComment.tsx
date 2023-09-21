@@ -39,6 +39,7 @@ function CreateComment() {
                         rows={4}
                         placeholder="Write your comment"
                         fullWidth={true}
+                        {...register('textComment')}
                     />
                 </Box>
                 <Button variant="outlined" type="submit">Send</Button>
