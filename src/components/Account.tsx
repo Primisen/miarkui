@@ -25,22 +25,19 @@ function Account() {
     return (
         <Container>
             <Link
-                className="px-3 py-2 flex items-center text-xs  uppercase font-bold leading-snug  hover:opacity-75"
+                className="px-6 py-2 flex items-center text-xs  uppercase font-bold leading-snug  hover:opacity-75"
                 to='/reviews'
             >
-                <Typography sx={{mt: 6, ml: 6}} variant='subtitle2'>
+                <Typography sx={{mt: 6}} variant='subtitle2'>
                     Create review
                 </Typography>
             </Link>
-            <Box mb={6}
-                 display="flex"
-                 justifyContent="center"
-                 alignItems="center"
-            >
+
+            <Box mb={8}>
                 {reviews.map((review) => (
-                    <Box>
+                    <Box mb={6}>
                         <PreviewReview review={review} key={review.id}/>
-                        <Box mt={2}>
+                        <Box mt={2} ml={3}>
                             <DeleteReview id={review.id!} key={review.title}/>
                         </Box>
                     </Box>
