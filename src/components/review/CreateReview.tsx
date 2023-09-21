@@ -244,14 +244,15 @@ function CreateReview() {
                     </Box>
 
                     {/*Text*/}
-                    <MarkdownEditor
-                        value={text}
-                        theme={theme.palette.mode}
-                        height="600px"
-                        visible={true}
-                        className="mt-20 mb-20"
-                        onChange={(value, viewUpdate) => setText(value)}
-                    />
+                    <div data-color-mode={theme.palette.mode}>
+                        <MarkdownEditor
+                            value={text}
+                            height="600px"
+                            visible={true}
+                            className="mt-20 mb-20"
+                            onChange={(value, viewUpdate) => setText(value)}
+                        />
+                    </div>
 
                     {/*Rating*/}
                     <Box
