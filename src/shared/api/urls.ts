@@ -8,6 +8,7 @@ const urls = {
     LOGIN: BASE_URL + '/login',
     CATEGORIES: BASE_URL + '/categories',
     SUBJECTS: BASE_URL + '/subjects',
+    COMMENTS:  BASE_URL + '/comments'
 }
 
 export default urls

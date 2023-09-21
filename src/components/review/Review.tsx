@@ -37,16 +37,19 @@ function Review() {
             mb={12}
         >
             <Container>
-                <Typography variant='caption'>{review?.user?.username}</Typography>
-                <Typography variant='overline'>{review?.subject.category.name}</Typography>
-                <Typography variant='h2'>{review?.subject.name}: review</Typography>
-                <Typography variant='h5'>{review?.title}</Typography>
+                <Typography mb={2} variant='overline'>{review?.subject.category.name}</Typography>
+                <Typography mb={2} variant='h2'>{review?.subject.name}: review</Typography>
+                <Typography mb={2} variant='h5'>{review?.title}</Typography>
 
-                <img src={review?.coverImageUrl} alt={review?.title}/>
+                <Box mb={2}>
+                    <img src={review?.coverImageUrl} alt={review?.title}/>
+                </Box>
 
-                <div data-color-mode={theme.palette.mode}>
-                    <MarkdownEditor.Markdown source={review?.text}/>
-                </div>
+                <Box mb={2}>
+                    <div data-color-mode={theme.palette.mode}>
+                        <MarkdownEditor.Markdown source={review?.text}/>
+                    </div>
+                </Box>
 
                 {review?.tags.map((tag) =>
                     <Tag tag={tag} key={tag.id}/>

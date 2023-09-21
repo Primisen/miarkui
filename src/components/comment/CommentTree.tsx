@@ -19,12 +19,14 @@ function CommentTree({comments}: CommentTreeProps) {
                         Comments
                     </Typography>
                     <List dense={true}>
-                        {comments ?
+                        {(comments && comments?.length > 0)
+                            ?
                             comments.map((comment) =>
                                 <ListItem>
                                     <Comment comment={comment} key={comment.id}/>
                                 </ListItem>,
-                            ) : <p>No comments yet</p>
+                            )
+                            : <Typography sx={{mb:1}} >No comments yet</Typography>
                         }
                     </List>
                 </Grid>
