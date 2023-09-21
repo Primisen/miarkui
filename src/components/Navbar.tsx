@@ -37,7 +37,7 @@ function Navbar() {
 
                         <Search/>
                         <ToggleTheme/>
-                        <LanguageChooser/>
+                        {/*<LanguageChooser/>*/}
 
                         {(localStorage.getItem('token') != null)
                             ?
